@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>PIXEL STUDY - your little study corner</title>
+    <link rel="stylesheet" href="style.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Nunito:wght@400;700;800&display=swap"
+        rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js"></script>
+    <script
+        src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+</head>
+
+<body>
+    <div class="app">
+        <header class="topbar pixel-panel">
+            <div class="logo">PIXEL STUDY</div>
+            <nav>
+                <button class="nav-btn active" data-nav="home">Home</button>
+                <button class="nav-btn" data-nav="sets">My Sets</button>
+                <button class="nav-btn" data-nav="create">+ Create Set</button>
+                <button class="nav-btn" data-nav="docs">Docs</button>
+                <button class="nav-btn" data-nav="progress">Progress * <span id="streakBadge">0</span></button>
+            </nav>
+        </header>
+        <section id="page-home" class="page active">
+            <div class="hero pixel-panel">
+                <div class="mascot" id="homeMascot">Hi(・ω・)</div>
+                <h1>Your little study corner</h1>
+                <p class="subtitle">Good luck studying, Liza! ٩(•́‿•̀)۶</p>
+                <div class="hero-actions">
+                    <button class="btn primary" id="goCreateBtn">+ Create Set</button>
+                    <button class="btn" id="goStudyBtn">Study Now</button>
+                </div>
+            </div>
+            <div class="stats-row">
+                <div class="stat pixel-panel"><b id="statSets">0</b><small>Saved sets</small></div>
+                <div class="stat pixel-panel"><b id="statCards">0</b><small>Total cards</small></div>
+                <div class="stat pixel-panel"><b id="statStreak">0</b><small>Study streak</small></div>
+            </div>
+            <h2 class="section-title">My Sets</h2>
+            <div id="homeSets" class="sets-grid"></div>
+        </section>
+        <section id="page-sets" class="page">
+            <h2 class="section-title">All flashcard sets</h2>
+            <div id="allSets" class="sets-grid"></div>
+        </section>
+        <section id="page-create" class="page">
+            <div class="pixel-panel form-panel">
+                <h2 id="editorTitle">Create a new set</h2>
+                <label class="field"><span>Set title *</span>
+                    <input id="setTitle" type="text" placeholder="e.g. OOP Basics" maxlength="80" />
+                </label>
+                <label class="field"><span>Description</span>
+                    <input id="setDesc" type="text" placeholder="e.g. Key ideas from chapter 3" maxlength="160" />
+                </label>
+                <h3>Cards</h3>
+                <div id="cardEditor"></div>
+                <div class="row">
+                    <button class="btn" id="addCardBtn">+ Add card</button>
+                    <div class="spacer"></div>
+                    <button class="btn ghost" id="cancelEditBtn">Cancel</button>
+                    <button class="btn primary" id="saveSetBtn">Save Set</button>
+                </div>
+                <p class="hint">Tip: alternatives separated by commas. Matching ignores case and extra spaces.</p>
+            </div>
+        </section>
+        <section id="page-detail" class="page">
+            <div class="pixel-panel">
+                <h2 id="detailTitle">Set title</h2>
+                <p id="detailDesc" class="muted"></p>
+                <p><b id="detailCount">0 cards</b> · <span id="detailDate" class="muted"></span></p>
+                <div class="row">
+                    <button class="btn primary" id="studySetBtn">Study this set</button>
+                    <button class="btn" id="editSetBtn">Edit</button>
+                    <button class="btn danger" id="deleteSetBtn">Delete</button>
+                </div>
+            </div>
+            <h3 class="section-title">Preview</h3>
+            <div id="detailPreview" class="preview-list"></div>
+        </section>
+        <section id="page-study" class="page">
+            <div class="study-top pixel-panel">
+                <div><b id="studySetName">Set</b> · <span id="studyProgress">Card 1 of 1</span></div>
+                <div><span id="studyCorrect">0</span> correct · <span id="studyWrong">0</span> missed</div>
+            </div>
+            <div class="progress-track">
+                <div id="progressFill"></div>
+            </div>
+            <div class="flashcard pixel-panel" id="flashcard">
+                <div class="q-meta">QUESTION <span id="qNum">01</span> / <span id="qTotal">01</span></div>
+                <div class="mascot small" id="studyMascot">(^_^)</div>
+                <h2 id="studyQuestion">Question?</h2>
+                <input id="answerInput" type="text" placeholder="Type your answer here..." autocomplete="off" />
+                <div class="row center">
+                    <button class="btn primary" id="submitAnswerBtn">Submit</button>
+                    <button class="btn ghost" id="skipBtn">Skip</button>
+                </div>
+                <div id="feedback" class="feedback hidden">
+                    <div id="feedbackBanner"></div>
+                    <p><b>Your answer:</b> <span id="fbYours"></span></p>
+                    <p><b>Correct answer:</b> <span id="fbExpected"></span></p>
+                    <p class="expl"><b>Why:</b> <span id="fbExpl"></span></p>
+                    <button class="btn primary" id="nextBtn">Next Question</button>
+                </div>
+            </div>
+        </section>
+        <section id="page-results" class="page">
+            <div class="pixel-panel center-text">
+                <div class="mascot big" id="resultsMascot">*</div>
+                <h2 id="resultsTitle">Session complete!</h2>
+                <p class="big-score"><span id="scoreCorrect">0</span> / <span id="scoreTotal">0</span> correct</p>
+                <div id="badgeBox" class="badges"></div>
+                <h3>Review</h3>
+                <div id="reviewList" class="preview-list"></div>
+                <div class="row center">
+                    <button class="btn primary" id="retryMissedBtn">Retry missed cards</button>
+                    <button class="btn" id="backHomeBtn">Back home</button>
+                </div>
+            </div>
+        </section>
+        <section id="page-progress" class="page">
+            <div class="pixel-panel center-text">
+                <h2>Your progress</h2>
+                <p class="big-score"><span id="progressStreak">0</span>-day streak</p>
+                <p>Sessions: <b id="progressSessions">0</b> · Best: <b id="progressBest">-</b></p>
+                <button class="btn ghost" id="resetProgressBtn">Reset progress</button>
+            </div>
+        </section>
+        <section id="page-docs" class="page">
+            <div class="pixel-panel form-panel">
+                <h2>Study Docs</h2>
+                <p class="hint">Import a note, read it here, auto-summarize it, and turn it into quiz cards.</p>
+                <div class="row">
+                    <label class="btn" for="docFile">Import file</label>
+                    <input id="docFile" type="file" accept=".txt,.md,.markdown,.docx,.pdf,text/plain,text/markdown,application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document" class="hidden" />
+                    <button class="btn ghost" id="docClearBtn">Clear</button>
+                    <div class="spacer"></div>
+                    <button class="btn" id="docSummaryBtn">Summarize</button>
+                    <button class="btn primary" id="docQuizBtn">Make quiz cards</button>
+                </div>
+                <label class="field"><span>Or paste notes here</span>
+                    <textarea id="docInput" rows="6" placeholder="Paste your notes or chapter text here..."></textarea>
+                </label>
+                <label class="field"><span>Doc title (for saving as a set)</span>
+                    <input id="docTitle" type="text" placeholder="e.g. Biology Chapter 4" maxlength="80" />
+                </label>
+            </div>
+            <div class="pixel-panel">
+                <h3>Reading view</h3>
+                <div id="docReader" class="doc-reader"><p class="muted">No document yet. Import a file or paste notes above.</p></div>
+            </div>
+            <div class="pixel-panel hidden" id="docSummaryPanel">
+                <h3>Summary</h3>
+                <ul id="docSummaryList" class="doc-summary"></ul>
+            </div>
+            <div class="pixel-panel hidden" id="docQuizPanel">
+                <h3>Generated questions <small class="muted">(review, then save)</small></h3>
+                <div id="docQuizList" class="preview-list"></div>
+                <div class="row">
+                    <div class="spacer"></div>
+                    <button class="btn primary" id="docSaveQuizBtn">Save as flashcard set</button>
+                </div>
+            </div>
+            <h3 class="section-title">Saved docs</h3>
+            <div id="docsList" class="sets-grid"></div>
+        </section>
+    </div>
+    <div class="buddies" aria-hidden="true">
+        <span class="buddy buddy-duck" data-img="assets/duck.png">🦆</span>
+        <span class="buddy buddy-chick" data-img="assets/chick.png">🐤</span>
+    </div>
+    <div id="toast" class="toast hidden"></div>
+    <script src="script.js"></script>
+</body>
+
+</html>

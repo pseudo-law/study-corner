@@ -1,0 +1,477 @@
+:root {
+    --cream: #FFF9E8;
+    --yellow: #FFE878;
+    --gold: #F6BD60;
+    --pink: #F7C9D4;
+    --brown: #503D35;
+    --green: #7FB069;
+    --red: #E07A5F;
+}
+
+* {
+    box-sizing: border-box
+}
+
+body {
+    margin: 0;
+    background: var(--cream);
+    color: var(--brown);
+    font-family: Nunito, system-ui, sans-serif;
+    background-image: linear-gradient(#f7ecd0 1px, transparent 1px), linear-gradient(90deg, #f7ecd0 1px, transparent 1px);
+    background-size: 24px 24px;
+}
+
+h1,
+h2,
+.logo {
+    font-family: "Press Start 2P", monospace;
+    line-height: 1.4
+}
+
+.app {
+    max-width: 860px;
+    margin: 0 auto;
+    padding: 16px 16px 40px
+}
+
+.pixel-panel {
+    background: #fffdf4;
+    border: 4px solid var(--brown);
+    box-shadow: 6px 6px 0 var(--gold);
+    border-radius: 4px;
+    padding: 16px;
+    margin-bottom: 16px
+}
+
+.topbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap
+}
+
+.logo {
+    background: var(--yellow);
+    border: 3px solid var(--brown);
+    padding: 8px 10px;
+    font-size: 12px
+}
+
+nav {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap
+}
+
+.nav-btn {
+    border: 3px solid var(--brown);
+    background: #fff;
+    padding: 8px 10px;
+    font-weight: 800;
+    cursor: pointer;
+    border-radius: 4px
+}
+
+.nav-btn.active {
+    background: var(--yellow)
+}
+
+.page {
+    display: none
+}
+
+.page.active {
+    display: block
+}
+
+.hero {
+    text-align: center;
+    background: linear-gradient(#fffdf4, #fff3c4)
+}
+
+.mascot {
+    font-size: 52px;
+    animation: bounce 1.6s infinite
+}
+
+.mascot.small {
+    font-size: 40px
+}
+
+.mascot.big {
+    font-size: 64px
+}
+
+@keyframes bounce {
+
+    0%,
+    100% {
+        transform: translateY(0)
+    }
+
+    50% {
+        transform: translateY(-8px)
+    }
+}
+
+.btn {
+    border: 3px solid var(--brown);
+    background: #fff;
+    padding: 10px 14px;
+    font-weight: 800;
+    cursor: pointer;
+    border-radius: 4px;
+    box-shadow: 3px 3px 0 var(--brown)
+}
+
+.btn:active {
+    transform: translate(2px, 2px);
+    box-shadow: 1px 1px 0 var(--brown)
+}
+
+.btn.primary {
+    background: var(--yellow)
+}
+
+.btn.danger {
+    background: var(--pink)
+}
+
+.btn.ghost {
+    background: transparent;
+    box-shadow: none
+}
+
+.row {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    margin-top: 12px;
+    flex-wrap: wrap
+}
+
+.row.center {
+    justify-content: center
+}
+
+.spacer {
+    flex: 1
+}
+
+.stats-row {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px
+}
+
+.stat {
+    text-align: center
+}
+
+.stat b {
+    font-size: 24px;
+    display: block
+}
+
+.section-title {
+    font-family: "Press Start 2P";
+    font-size: 12px;
+    margin: 18px 0 10px
+}
+
+.sets-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 12px
+}
+
+.set-card {
+    background: #fffdf4;
+    border: 4px solid var(--brown);
+    box-shadow: 5px 5px 0 var(--gold);
+    padding: 12px;
+    border-radius: 4px
+}
+
+.set-card h3 {
+    margin: 0 0 6px;
+    font-size: 15px
+}
+
+.set-card p {
+    margin: 0 0 10px;
+    color: #7a655c;
+    font-size: 14px
+}
+
+.field {
+    display: grid;
+    gap: 6px;
+    margin: 10px 0
+}
+
+.field span {
+    font-weight: 800
+}
+
+input[type=text] {
+    border: 3px solid var(--brown);
+    padding: 10px;
+    border-radius: 4px;
+    font-size: 15px;
+    width: 100%;
+    background: #fff
+}
+
+input:focus {
+    outline: 3px solid var(--gold)
+}
+
+.card-row {
+    border: 3px dashed var(--gold);
+    padding: 10px;
+    margin: 10px 0;
+    background: #fff
+}
+
+.hint {
+    font-size: 13px;
+    color: #7a655c
+}
+
+.study-top {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+    flex-wrap: wrap
+}
+
+.progress-track {
+    height: 14px;
+    border: 3px solid var(--brown);
+    background: #fff;
+    margin: 0 0 12px
+}
+
+#progressFill {
+    height: 100%;
+    width: 0;
+    background: var(--yellow)
+}
+
+.flashcard {
+    text-align: center
+}
+
+.flashcard h2 {
+    font-family: Nunito;
+    font-size: 22px
+}
+
+.q-meta {
+    font-family: "Press Start 2P";
+    font-size: 10px;
+    background: var(--brown);
+    color: var(--yellow);
+    display: inline-block;
+    padding: 6px 8px
+}
+
+.feedback {
+    margin-top: 14px;
+    text-align: left;
+    border-top: 3px dashed var(--gold);
+    padding-top: 12px
+}
+
+.feedback.correct #feedbackBanner {
+    background: #dff2d8;
+    border: 3px solid var(--brown);
+    padding: 8px;
+    font-weight: 800
+}
+
+.feedback.wrong #feedbackBanner {
+    background: #ffe0d6;
+    border: 3px solid var(--brown);
+    padding: 8px;
+    font-weight: 800
+}
+
+.expl {
+    background: #fff8d6;
+    border: 3px solid var(--brown);
+    padding: 10px
+}
+
+.hidden {
+    display: none
+}
+
+.preview-list {
+    display: grid;
+    gap: 8px
+}
+
+.preview-item {
+    border: 3px solid var(--brown);
+    background: #fff;
+    padding: 8px
+}
+
+.preview-item.wrong {
+    border-color: var(--red)
+}
+
+.preview-item.correct {
+    border-color: var(--green)
+}
+
+.center-text {
+    text-align: center
+}
+
+.big-score {
+    font-size: 28px;
+    font-weight: 800
+}
+
+.badges {
+    display: flex;
+    gap: 8px;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin: 10px 0
+}
+
+.badge {
+    background: var(--yellow);
+    border: 3px solid var(--brown);
+    padding: 6px 10px;
+    font-weight: 800
+}
+
+.muted {
+    color: #7a655c
+}
+
+.toast {
+    position: fixed;
+    bottom: 16px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--brown);
+    color: #fff;
+    padding: 10px 14px;
+    border: 3px solid #000
+}
+
+@media(max-width:760px) {
+    .stats-row {
+        grid-template-columns: 1fr 1fr
+    }
+}
+
+/* Tiny buddies in the bottom-right corner */
+.buddies {
+    position: fixed;
+    right: 12px;
+    bottom: 10px;
+    display: flex;
+    align-items: flex-end;
+    gap: 4px;
+    z-index: 5;
+    pointer-events: none;
+}
+
+.buddy {
+    width: 44px;
+    height: 44px;
+    object-fit: contain;
+    image-rendering: pixelated;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 34px;
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
+.buddy.has-img {
+    font-size: 0;
+    color: transparent;
+}
+
+.buddy-fallback {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 34px;
+}
+
+/* Duck: little circle waddle */
+.buddy-duck {
+    display: inline-block;
+    will-change: transform;
+    animation: duck-circle 4s ease-in-out infinite;
+}
+
+@keyframes duck-circle {
+    0% { transform: translate(0, 0) rotate(-8deg); }
+    25% { transform: translate(30px, -16px) rotate(8deg); }
+    50% { transform: translate(60px, 0) rotate(-8deg); }
+    75% { transform: translate(30px, -16px) rotate(8deg); }
+    100% { transform: translate(0, 0) rotate(-8deg); }
+}
+
+/* Chick: gentle hop up and down */
+.buddy-chick {
+    width: 38px;
+    height: 38px;
+    animation: chick-hop 1.2s ease-in-out infinite;
+}
+
+@keyframes chick-hop {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-12px); }
+}
+
+@media(max-width:760px) {
+    .buddy { width: 36px; height: 36px; }
+    .buddy-chick { width: 32px; height: 32px; }
+}
+
+/* Study docs: reader + generated quiz */
+textarea {
+    border: 3px solid var(--brown);
+    padding: 10px;
+    border-radius: 4px;
+    font-size: 15px;
+    font-family: Nunito, system-ui, sans-serif;
+    width: 100%;
+    background: #fff;
+    resize: vertical;
+}
+
+textarea:focus { outline: 3px solid var(--gold); }
+
+.doc-reader {
+    background: #fff;
+    border: 3px solid var(--brown);
+    padding: 12px;
+    max-height: 320px;
+    overflow-y: auto;
+    line-height: 1.6;
+    white-space: pre-wrap;
+}
+
+.doc-reader h4 { margin: 12px 0 6px; }
+.doc-reader p { margin: 6px 0; }
+
+.doc-summary { margin: 0; padding-left: 20px; line-height: 1.6; }
+.doc-summary li { margin-bottom: 6px; }
+
+.quiz-edit { display: grid; gap: 6px; }
+.quiz-edit input { font-size: 14px; padding: 8px; }
