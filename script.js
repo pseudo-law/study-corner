@@ -44,7 +44,7 @@ d.innerHTML=`<label class="field"><span>Question *</span><input type="text" data
 <label class="field"><span>Correct answer *</span><input type="text" data-f="a" value="${esc(c.a||"")}" /></label>
 <label class="field"><span>Alternatives (comma separated)</span><input type="text" data-f="alt" value="${esc(c.alt||"")}" /></label>
 <label class="field"><span>Topic</span><input type="text" data-f="topic" value="${esc(c.topic||"")}" /></label>
-<label class="field"><span>Explanation *</span><input type="text" data-f="expl" value="${esc(c.expl||"")}" /></label>
+<label class="field"><span>Explanation (optional)</span><input type="text" data-f="expl" value="${esc(c.expl||"")}" /></label>
 <button class="btn danger" data-del>Delete card</button>`;
 d.querySelector("[data-del]").onclick=()=>{ if(document.querySelectorAll(".card-row").length<=1){toast("Keep at least 1 card");return;} d.remove(); };
 return d;
@@ -72,7 +72,6 @@ const g=(f)=>rows[i].querySelector(`[data-f="${f}"]`).value;
 const q=g("q").trim(),a=g("a").trim(),expl=g("expl").trim();
 if(!q&&!a&&!g("alt").trim()&&!expl) continue;
 if(!q||!a){toast(`Card ${i+1}: question + answer required`);return;}
-if(!expl){toast(`Card ${i+1}: please add explanation`);return;}
 cards.push({q,a,alt:g("alt").trim(),topic:g("topic").trim(),expl});
 }
 if(!cards.length){toast("Add at least 1 complete card");return;}
@@ -153,7 +152,8 @@ fb.className="feedback "+(ok?"correct":"wrong");
 $("feedbackBanner").textContent=ok?"Correct! Great job!":(skipped?"Skipped - no worries!":"Not quite! Don't give up.");
 $("fbYours").textContent=raw||"(skipped)";
 $("fbExpected").textContent=c.a+((c.alt)?`  (also accepts: ${c.alt})`:"");
-$("fbExpl").textContent=c.expl||"No explanation yet.";
+$("fbExpl").textContent=c.expl||"—";
+$("fbExpl").parentElement.style.display=c.expl?"":"none";
 $("studyMascot").textContent=ok?"\\(^_^)/":`(>_<)`;
 $("answerInput").disabled=true; $("submitAnswerBtn").disabled=true;
 $("nextBtn").textContent=session.idx+1>=session.cards.length?"See Results":"Next Question";
@@ -176,7 +176,7 @@ if(session.correct>=5) badges.push("5+ CORRECT");
 if(session.wrong===0&&session.cards.length>0) badges.push("FLAWLESS");
 if(session.cards.length>=5) badges.push("BIG SET");
 $("badgeBox").innerHTML=badges.map(b=>`<span class="badge">${b}</span>`).join("")||"<span class='muted'>Answer more to earn badges</span>";
-$("reviewList").innerHTML=session.results.map((r,i)=>`<div class="preview-item ${r.ok?"correct":"wrong"}"><b>${i+1}. ${esc(r.card.q)}</b><br/>Yours: ${esc(r.yours)}<br/>Correct: ${esc(r.card.a)}<br/><span class="muted">${esc(r.card.expl)}</span></div>`).join("");
+$("reviewList").innerHTML=session.results.map((r,i)=>`<div class="preview-item ${r.ok?"correct":"wrong"}"><b>${i+1}. ${esc(r.card.q)}</b><br/>Yours: ${esc(r.yours)}<br/>Correct: ${esc(r.card.a)}${r.card.expl?`<br/><span class="muted">${esc(r.card.expl)}</span>`:""}</div>`).join("");
 const p=getProgress();
 const today=new Date().toDateString();
 if(p.lastDay!==today){ p.streak=(p.lastDay&&((Date.now()-new Date(p.lastDay).getTime())<86400000*2))?p.streak+1:1; p.lastDay=today; }
@@ -374,7 +374,7 @@ if(!draftQuiz.length){ toast("Could not find quiz-worthy sentences. Try longer n
 $("docQuizList").innerHTML = draftQuiz.map((c,i)=>`<div class="preview-item"><div class="quiz-edit">
 <label class="field"><span>Q${i+1}</span><input type="text" data-qq="${i}" value="${esc(c.q)}" /></label>
 <label class="field"><span>Answer</span><input type="text" data-qa="${i}" value="${esc(c.a)}" /></label>
-<label class="field"><span>Why / explanation</span><input type="text" data-qe="${i}" value="${esc(c.expl)}" /></label>
+<label class="field"><span>Why / explanation (optional)</span><input type="text" data-qe="${i}" value="${esc(c.expl)}" /></label>
 </div></div>`).join("");
 $("docQuizPanel").classList.remove("hidden");
 persistActiveDoc();
