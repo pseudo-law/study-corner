@@ -75,6 +75,7 @@ if(!q||!a){toast(`Card ${i+1}: question + answer required`);return;}
 cards.push({q,a,alt:g("alt").trim(),topic:g("topic").trim(),expl});
 }
 if(!cards.length){toast("Add at least 1 complete card");return;}
+if(cards.length<4){ toast("Tip: add 4+ cards to unlock multiple choice mode!"); }
 if(editingId){ Object.assign(sets.find(x=>x.id===editingId),{title,description:$("setDesc").value.trim(),cards}); toast("Set updated!"); }
 else{ sets.unshift({id:uid(),title,description:$("setDesc").value.trim(),cards,createdAt:Date.now()}); toast("Set saved!"); }
 save(SETS_KEY,sets); editingId=null; renderAll(); show("home");
@@ -104,15 +105,34 @@ return a;
 }
 function startStudy(id, onlyMissed){
 const s=sets.find(x=>x.id===id); if(!s||!s.cards.length){toast("No cards to study");return;}
+let mode="type";
+const picked=document.querySelector('input[name="studyMode"]:checked');
+if(picked) mode=picked.value;
 let cards=s.cards.map((c,i)=>({...c,_idx:i}));
 if(onlyMissed?.length) cards=cards.filter(c=>onlyMissed.includes(c._idx));
+if(mode==="mc" && cards.length<4){ toast("Multiple choice needs 4+ cards - using type mode"); mode="type"; }
 shuffleArr(cards);
-session={setId:id,setTitle:s.title,cards,idx:0,correct:0,wrong:0,locked:false,results:[]};
+session={setId:id,setTitle:s.title,cards,idx:0,correct:0,wrong:0,locked:false,results:[],mode,pool:s.cards.map(c=>c.a)};
 show("study"); renderCard();
+}
+function buildMcOptions(card){
+const correct=card.a;
+const distract=new Set();
+shuffleArr([...(session.pool||[])]).forEach(a=>{
+if(distract.size>=3) return;
+const t=String(a||"").trim();
+if(!t) return;
+if(norm(t)===norm(correct)) return;
+if([...distract].some(d=>norm(d)===norm(t))) return;
+distract.add(t);
+});
+const opts=shuffleArr([{t:correct,ok:true},...[...distract].map(t=>({t,ok:false}))]);
+return {opts:opts.slice(0,4), usable:distract.size>=3};
 }
 function renderCard(){
 const c=session.cards[session.idx];
 session.locked=false;
+session.mcPick=null;
 $("studySetName").textContent=session.setTitle;
 $("studyProgress").textContent=`Card ${session.idx+1} of ${session.cards.length}`;
 $("studyCorrect").textContent=session.correct; $("studyWrong").textContent=session.wrong;
@@ -121,10 +141,40 @@ $("qNum").textContent=String(session.idx+1).padStart(2,"0");
 $("qTotal").textContent=String(session.cards.length).padStart(2,"0");
 $("studyQuestion").textContent=c.q;
 $("studyMascot").textContent="(^_^)";
+const isMc=session.mode==="mc";
+$("answerInput").style.display=isMc?"none":"";
+$("submitAnswerBtn").style.display=isMc?"none":"";
+const box=$("mcChoices");
+if(!isMc){ box.className="mc-choices hidden"; box.innerHTML=""; }
+else{
+let built=buildMcOptions(c);
+if(!built.usable){
+box.className="mc-choices hidden"; box.innerHTML="";
+$("answerInput").style.display=""; $("submitAnswerBtn").style.display="";
+session.mcFallback=true;
+toast("Not enough unique answers - type it instead");
+}else{
+session.mcFallback=false;
+box.className="mc-choices";
+const letters=["A","B","C","D"];
+box.innerHTML=built.opts.map((o,i)=>`<button class="mc-choice" data-mc="${i}"><span class="mc-letter">${letters[i]}</span><span>${esc(o.t)}</span></button>`).join("");
+box.querySelectorAll("[data-mc]").forEach(btn=>btn.onclick=()=>{
+if(session.locked) return;
+session.locked=true;
+const pick=built.opts[Number(btn.dataset.mc)];
+session.mcPick=pick;
+box.querySelectorAll("[data-mc]").forEach(b=>b.disabled=true);
+btn.classList.add(pick.ok?"picked-correct":"picked-wrong");
+if(!pick.ok) box.querySelectorAll("[data-mc]").forEach((b,i)=>{ if(built.opts[i].ok) b.classList.add("show-correct"); });
+recordResult(false, pick.t);
+showFeedback(false, pick.t);
+});
+}
+}
 $("answerInput").value=""; $("answerInput").disabled=false;
 $("submitAnswerBtn").disabled=false;
 $("feedback").className="feedback hidden";
-setTimeout(()=>$("answerInput").focus(),50);
+if(!isMc) setTimeout(()=>$("answerInput").focus(),50);
 }
 $("submitAnswerBtn").onclick=submitAnswer;
 $("answerInput").addEventListener("keydown",e=>{ if(e.key==="Enter") submitAnswer(); });
@@ -140,8 +190,8 @@ showFeedback(false, raw);
 function recordResult(skipped, raw){
 const c=session.cards[session.idx];
 const ok=!skipped && acceptedAnswers(c).includes(norm(raw||""));
-if(ok){ session.correct++; session.results.push({card:c,yours:raw,ok:true}); }
-else{ session.wrong++; session.results.push({card:c,yours:raw||"(skipped)",ok:false}); }
+if(ok){ session.correct++; session.results.push({card:c,yours:raw,ok:true,mode:session.mode}); }
+else{ session.wrong++; session.results.push({card:c,yours:raw||"(skipped)",ok:false,mode:session.mode}); }
 $("studyCorrect").textContent=session.correct; $("studyWrong").textContent=session.wrong;
 }
 function showFeedback(skipped, raw){
