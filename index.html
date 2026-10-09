@@ -72,6 +72,13 @@
                 <h2 id="detailTitle">Set title</h2>
                 <p id="detailDesc" class="muted"></p>
                 <p><b id="detailCount">0 cards</b> · <span id="detailDate" class="muted"></span></p>
+                <label class="field mode-pick"><span>Study mode</span>
+                    <div class="row" role="radiogroup" aria-label="Study mode">
+                        <label class="mode-opt"><input type="radio" name="studyMode" value="type" checked /> ⌨️ Type answer</label>
+                        <label class="mode-opt"><input type="radio" name="studyMode" value="mc" /> 🔘 Multiple choice</label>
+                    </div>
+                </label>
+                <p class="hint" id="mcHint">Multiple choice needs 4+ cards — it borrows answers from other cards as wrong options.</p>
                 <div class="row">
                     <button class="btn primary" id="studySetBtn">Study this set</button>
                     <button class="btn" id="editSetBtn">Edit</button>
@@ -94,6 +101,7 @@
                 <div class="mascot small" id="studyMascot">(^_^)</div>
                 <h2 id="studyQuestion">Question?</h2>
                 <input id="answerInput" type="text" placeholder="Type your answer here..." autocomplete="off" />
+                <div id="mcChoices" class="mc-choices hidden"></div>
                 <div class="row center">
                     <button class="btn primary" id="submitAnswerBtn">Submit</button>
                     <button class="btn ghost" id="skipBtn">Skip</button>

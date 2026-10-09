@@ -305,6 +305,57 @@ input:focus {
     padding: 10px
 }
 
+.mode-pick { margin-top: 12px; }
+.mode-opt {
+    border: 3px solid var(--brown);
+    background: #fff;
+    padding: 8px 10px;
+    border-radius: 4px;
+    font-weight: 800;
+    cursor: pointer;
+    display: inline-flex;
+    gap: 6px;
+    align-items: center;
+}
+.mode-opt:has(input:checked) { background: var(--yellow); }
+
+.mc-choices {
+    display: grid;
+    gap: 8px;
+    margin: 12px 0 4px;
+    text-align: left;
+}
+.mc-choice {
+    border: 3px solid var(--brown);
+    background: #fff;
+    padding: 10px 12px;
+    border-radius: 4px;
+    font-weight: 700;
+    font-size: 15px;
+    cursor: pointer;
+    box-shadow: 3px 3px 0 var(--brown);
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    width: 100%;
+    text-align: left;
+    font-family: Nunito, system-ui, sans-serif;
+    color: var(--brown);
+}
+.mc-choice:active { transform: translate(2px, 2px); box-shadow: 1px 1px 0 var(--brown); }
+.mc-choice:disabled { cursor: default; opacity: .95; }
+.mc-choice .mc-letter {
+    background: var(--brown);
+    color: var(--yellow);
+    font-family: "Press Start 2P", monospace;
+    font-size: 10px;
+    padding: 6px 7px;
+    flex-shrink: 0;
+}
+.mc-choice.picked-correct { background: #dff2d8; }
+.mc-choice.picked-wrong { background: #ffe0d6; }
+.mc-choice.show-correct { outline: 3px solid var(--green); }
+
 .hidden {
     display: none
 }
