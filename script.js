@@ -96,10 +96,18 @@ if(!confirm("Delete this set permanently?")) return;
 sets=sets.filter(x=>x.id!==activeSetId); save(SETS_KEY,sets); renderAll(); show("home"); toast("Set deleted");
 };
 function acceptedAnswers(c){ return [c.a, ...(c.alt||"").split(",")].map(norm).filter(Boolean); }
+function shuffleArr(a){
+for(let i=a.length-1;i>0;i--){
+const j=Math.floor(Math.random()*(i+1));
+[a[i],a[j]]=[a[j],a[i]];
+}
+return a;
+}
 function startStudy(id, onlyMissed){
 const s=sets.find(x=>x.id===id); if(!s||!s.cards.length){toast("No cards to study");return;}
 let cards=s.cards.map((c,i)=>({...c,_idx:i}));
 if(onlyMissed?.length) cards=cards.filter(c=>onlyMissed.includes(c._idx));
+shuffleArr(cards);
 session={setId:id,setTitle:s.title,cards,idx:0,correct:0,wrong:0,locked:false,results:[]};
 show("study"); renderCard();
 }
