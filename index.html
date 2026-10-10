@@ -76,9 +76,10 @@
                     <div class="row" role="radiogroup" aria-label="Study mode">
                         <label class="mode-opt"><input type="radio" name="studyMode" value="type" checked /> ⌨️ Type answer</label>
                         <label class="mode-opt"><input type="radio" name="studyMode" value="mc" /> 🔘 Multiple choice</label>
+                        <label class="mode-opt"><input type="radio" name="studyMode" value="tf" /> ↔️ True / False</label>
                     </div>
                 </label>
-                <p class="hint" id="mcHint">Multiple choice needs 4+ cards — it borrows answers from other cards as wrong options.</p>
+                <p class="hint" id="mcHint">Multiple choice needs 4+ cards · True/False needs 2+ cards. Wrong options are borrowed from other cards.</p>
                 <div class="row">
                     <button class="btn primary" id="studySetBtn">Study this set</button>
                     <button class="btn" id="editSetBtn">Edit</button>
@@ -102,6 +103,23 @@
                 <h2 id="studyQuestion">Question?</h2>
                 <input id="answerInput" type="text" placeholder="Type your answer here..." autocomplete="off" />
                 <div id="mcChoices" class="mc-choices hidden"></div>
+                <div id="tfZone" class="tf-zone hidden">
+                    <div class="tf-lanes" aria-hidden="true">
+                        <div class="tf-lane tf-lane-false">✖<br />FALSE<br /><small>← swipe / ← key</small></div>
+                        <div class="tf-lane tf-lane-true">✔<br />TRUE<br /><small>swipe → / → key</small></div>
+                    </div>
+                    <div class="tf-statement pixel-panel" id="tfStatement">
+                        <div class="tf-stamp tf-stamp-false" id="tfStampFalse">FALSE ✖</div>
+                        <div class="tf-stamp tf-stamp-true" id="tfStampTrue">TRUE ✔</div>
+                        <p class="tf-q" id="tfQuestion">Statement?</p>
+                        <p class="tf-a" id="tfAnswer">Answer?</p>
+                    </div>
+                    <div class="row center">
+                        <button class="btn danger" id="tfFalseBtn">✖ False (←)</button>
+                        <button class="btn primary" id="tfTrueBtn">True → (✔)</button>
+                    </div>
+                    <p class="hint center-text">Drag the card, swipe, or use ← / → keys. Right = True, Left = False.</p>
+                </div>
                 <div class="row center">
                     <button class="btn primary" id="submitAnswerBtn">Submit</button>
                     <button class="btn ghost" id="skipBtn">Skip</button>

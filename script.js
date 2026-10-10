@@ -111,9 +111,28 @@ if(picked) mode=picked.value;
 let cards=s.cards.map((c,i)=>({...c,_idx:i}));
 if(onlyMissed?.length) cards=cards.filter(c=>onlyMissed.includes(c._idx));
 if(mode==="mc" && cards.length<4){ toast("Multiple choice needs 4+ cards - using type mode"); mode="type"; }
+if(mode==="tf" && s.cards.length<2){ toast("True/False needs 2+ cards - using type mode"); mode="type"; }
 shuffleArr(cards);
 session={setId:id,setTitle:s.title,cards,idx:0,correct:0,wrong:0,locked:false,results:[],mode,pool:s.cards.map(c=>c.a)};
 show("study"); renderCard();
+}
+function pickTfDistractor(card){
+const cands=shuffleArr([...(session.pool||[])]);
+for(const a of cands){
+const t=String(a||"").trim();
+if(!t) continue;
+if(norm(t)===norm(card.a)) continue;
+if((card.alt||"").split(",").map(norm).includes(norm(t))) continue;
+return t;
+}
+return null;
+}
+function buildTfStatement(card){
+const truthful=Math.random()<0.5;
+if(truthful) return {shown:card.a, isTrue:true};
+const fake=pickTfDistractor(card);
+if(!fake) return {shown:card.a, isTrue:true, forced:true};
+return {shown:fake, isTrue:false};
 }
 function buildMcOptions(card){
 const correct=card.a;
@@ -141,9 +160,12 @@ $("qNum").textContent=String(session.idx+1).padStart(2,"0");
 $("qTotal").textContent=String(session.cards.length).padStart(2,"0");
 $("studyQuestion").textContent=c.q;
 $("studyMascot").textContent="(^_^)";
-const isMc=session.mode==="mc";
-$("answerInput").style.display=isMc?"none":"";
-$("submitAnswerBtn").style.display=isMc?"none":"";
+const modeNow=session.mode||"type";
+const isMc=modeNow==="mc";
+const isTf=modeNow==="tf";
+$("answerInput").style.display=(isMc||isTf)?"none":"";
+$("submitAnswerBtn").style.display=(isMc||isTf)?"none":"";
+$("skipBtn").style.display=(isMc||isTf)?"none":"";
 const box=$("mcChoices");
 if(!isMc){ box.className="mc-choices hidden"; box.innerHTML=""; }
 else{
@@ -174,8 +196,90 @@ showFeedback(false, pick.t);
 $("answerInput").value=""; $("answerInput").disabled=false;
 $("submitAnswerBtn").disabled=false;
 $("feedback").className="feedback hidden";
-if(!isMc) setTimeout(()=>$("answerInput").focus(),50);
+renderTfZone(c, isTf);
+if(!isMc && !isTf) setTimeout(()=>$("answerInput").focus(),50);
 }
+function renderTfZone(c, isTf){
+const zone=$("tfZone");
+if(!isTf){ zone.className="tf-zone hidden"; return; }
+zone.classList.remove("hidden");
+const stmt=buildTfStatement(c);
+session.tfShown=stmt.shown; session.tfTruth=stmt.isTrue;
+$("tfQuestion").textContent=c.q;
+$("tfAnswer").textContent=stmt.shown;
+const card=$("tfStatement");
+card.style.transform=""; card.classList.remove("tf-drag-false","tf-drag-true","tf-right","tf-wrong","tf-locked");
+$("tfTrueBtn").disabled=false; $("tfFalseBtn").disabled=false;
+}
+function answerTf(sayTrue){
+if(!session||session.locked||session.mode!=="tf") return;
+session.locked=true;
+const ok=(sayTrue===session.tfTruth);
+const card=$("tfStatement");
+card.classList.add("tf-locked", ok?"tf-right":"tf-wrong");
+card.style.transform=sayTrue?"translateX(60px) rotate(4deg)":"translateX(-60px) rotate(-4deg)";
+$("tfTrueBtn").disabled=true; $("tfFalseBtn").disabled=true;
+recordTfResult(ok);
+showTfFeedback(ok);
+}
+function recordTfResult(ok){
+const c=session.cards[session.idx];
+if(ok){ session.correct++; }
+else{ session.wrong++; }
+session.results.push({card:c, yours:(session.tfPickLabel||"")||(ok?"TRUE":"FALSE"), ok, mode:"tf", tfShown:session.tfShown, tfTruth:session.tfTruth});
+$("studyCorrect").textContent=session.correct; $("studyWrong").textContent=session.wrong;
+}
+function showTfFeedback(ok){
+const c=session.cards[session.idx];
+const fb=$("feedback");
+fb.className="feedback "+(ok?"correct":"wrong");
+$("feedbackBanner").textContent=ok?"Correct! Great call!":"Not quite! Check the real answer.";
+$("fbYours").textContent=(session.tfPickLabel||"")+" — statement was "+(session.tfTruth?"TRUE":"FALSE")+": \""+c.q+"\" → \""+session.tfShown+"\"";
+$("fbExpected").textContent=c.a+((c.alt)?`  (also accepts: ${c.alt})`:"");
+$("fbExpl").textContent=c.expl||"—";
+$("fbExpl").parentElement.style.display=c.expl?"":"none";
+$("studyMascot").textContent=ok?"\\(^_^)/":`(>_<)`;
+$("answerInput").disabled=true; $("submitAnswerBtn").disabled=true;
+$("nextBtn").textContent=session.idx+1>=session.cards.length?"See Results":"Next Question";
+$("progressFill").style.width=`${((session.idx+1)/session.cards.length)*100}%`;
+}
+$("tfTrueBtn").onclick=()=>{ session.tfPickLabel="TRUE"; answerTf(true); };
+$("tfFalseBtn").onclick=()=>{ session.tfPickLabel="FALSE"; answerTf(false); };
+document.addEventListener("keydown",e=>{
+if(!session||session.mode!=="tf") return;
+if(!$("page-study").classList.contains("active")) return;
+if(session.locked) return;
+const tag=(document.activeElement&&document.activeElement.tagName)||"";
+if(tag==="INPUT"||tag==="TEXTAREA") return;
+if(e.key==="ArrowRight"){ e.preventDefault(); session.tfPickLabel="TRUE"; answerTf(true); }
+else if(e.key==="ArrowLeft"){ e.preventDefault(); session.tfPickLabel="FALSE"; answerTf(false); }
+});
+(function initTfSwipe(){
+const card=document.getElementById("tfStatement");
+if(!card) return;
+let startX=null, dx=0;
+const setDrag=(d)=>{
+card.classList.toggle("tf-drag-true", d>30);
+card.classList.toggle("tf-drag-false", d<-30);
+card.style.transform=d?`translateX(${d}px) rotate(${d/18}deg)`:"";
+};
+card.addEventListener("pointerdown",e=>{ if(!session||session.locked||session.mode!=="tf") return; startX=e.clientX; dx=0; card.setPointerCapture&&card.setPointerCapture(e.pointerId); });
+card.addEventListener("pointermove",e=>{ if(startX==null||!session||session.locked) return; dx=e.clientX-startX; setDrag(dx); });
+const end=()=>{
+if(startX==null) return;
+const TH=70;
+if(!session.locked&&session&&session.mode==="tf"){
+if(dx>TH){ session.tfPickLabel="TRUE"; setDrag(0); startX=null; answerTf(true); return; }
+if(dx<-TH){ session.tfPickLabel="FALSE"; setDrag(0); startX=null; answerTf(false); return; }
+}
+setDrag(0); startX=null;
+};
+card.addEventListener("pointerup",end);
+card.addEventListener("pointercancel",()=>{ setDrag(0); startX=null; });
+card.addEventListener("touchstart",e=>{ if(!session||session.locked||session.mode!=="tf") return; startX=e.touches[0].clientX; dx=0; },{passive:true});
+card.addEventListener("touchmove",e=>{ if(startX==null||!session||session.locked) return; dx=e.touches[0].clientX-startX; setDrag(dx); },{passive:true});
+card.addEventListener("touchend",end);
+})();
 $("submitAnswerBtn").onclick=submitAnswer;
 $("answerInput").addEventListener("keydown",e=>{ if(e.key==="Enter") submitAnswer(); });
 $("skipBtn").onclick=()=>{ if(!session||session.locked) return; session.locked=true; recordResult(true); showFeedback(true); };
@@ -226,7 +330,12 @@ if(session.correct>=5) badges.push("5+ CORRECT");
 if(session.wrong===0&&session.cards.length>0) badges.push("FLAWLESS");
 if(session.cards.length>=5) badges.push("BIG SET");
 $("badgeBox").innerHTML=badges.map(b=>`<span class="badge">${b}</span>`).join("")||"<span class='muted'>Answer more to earn badges</span>";
-$("reviewList").innerHTML=session.results.map((r,i)=>`<div class="preview-item ${r.ok?"correct":"wrong"}"><b>${i+1}. ${esc(r.card.q)}</b><br/>Yours: ${esc(r.yours)}<br/>Correct: ${esc(r.card.a)}${r.card.expl?`<br/><span class="muted">${esc(r.card.expl)}</span>`:""}</div>`).join("");
+$("reviewList").innerHTML=session.results.map((r,i)=>{
+let extra="";
+if(r.mode==="tf") extra=`<br/><span class="muted">Statement: "${esc(r.card.q)}" → "${esc(r.tfShown||"")}" (${r.tfTruth?"TRUE":"FALSE"})</span>`;
+else if(r.card.expl) extra=`<br/><span class="muted">${esc(r.card.expl)}</span>`;
+return `<div class="preview-item ${r.ok?"correct":"wrong"}"><b>${i+1}. ${esc(r.card.q)}</b><br/>Yours: ${esc(r.yours)}<br/>Correct: ${esc(r.card.a)}${extra}</div>`;
+}).join("");
 const p=getProgress();
 const today=new Date().toDateString();
 if(p.lastDay!==today){ p.streak=(p.lastDay&&((Date.now()-new Date(p.lastDay).getTime())<86400000*2))?p.streak+1:1; p.lastDay=today; }
