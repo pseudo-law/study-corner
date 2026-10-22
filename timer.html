@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Study Timer - babi's study nook</title>
+    <link rel="stylesheet" href="landing.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Nunito:wght@400;700;800&display=swap"
+        rel="stylesheet">
+</head>
+
+<body class="timer-page">
+    <header class="topbar pixel-panel">
+        <div class="logo">☀ babi's study corner</div>
+        <nav>
+            <a href="index.html" class="nav-btn">Home</a>
+            <a href="study.html" class="nav-btn">Study Corner</a>
+            <a href="study.html" class="nav-btn">My Flashcards</a>
+            <a href="timer.html" class="nav-btn active">Study Timer</a>
+        </nav>
+        <button class="menu-toggle" aria-label="Menu" aria-expanded="false">☰</button>
+    </header>
+
+    <main class="timer-stage">
+        <div class="timer-card">
+            <h1>Study Timer</h1>
+            <p class="timer-subtitle">One step at a time, babi. You've got this!</p>
+
+            <div class="mode-selector">
+                <button class="mode-btn active" data-mode="focus" data-duration="25">Focus</button>
+                <button class="mode-btn" data-mode="short" data-duration="5">Short Break</button>
+                <button class="mode-btn" data-mode="long" data-duration="15">Long Break</button>
+            </div>
+
+            <div class="timer-display">
+                <div class="progress-circle">
+                    <svg class="progress-ring" width="260" height="260">
+                        <circle class="progress-bg" cx="130" cy="130" r="110" />
+                        <circle class="progress-fill" cx="130" cy="130" r="110" />
+                    </svg>
+                    <div class="timer-time" id="timerTime">25:00</div>
+                </div>
+            </div>
+
+            <p class="mode-message" id="modeMessage">Time to focus, babi! ✨</p>
+
+            <div class="timer-controls">
+                <button class="btn primary" id="startBtn">Start</button>
+                <button class="btn" id="resetBtn">Reset</button>
+                <button class="btn" id="skipBtn">Skip</button>
+            </div>
+
+            <p class="session-counter" id="sessionCounter">Focus sessions completed: 0</p>
+
+            <p class="encouragement" id="encouragement">Small steps still move you forward.</p>
+
+            <div class="settings-section">
+                <button class="settings-toggle" id="settingsToggle" aria-label="Settings">⚙</button>
+                <div class="settings-panel hidden" id="settingsPanel">
+                    <h3>Timer Settings</h3>
+                    <label class="field">
+                        <span>Focus (min)</span>
+                        <input type="number" id="focusDuration" min="1" max="60" value="25" />
+                    </label>
+                    <label class="field">
+                        <span>Short Break (min)</span>
+                        <input type="number" id="shortBreakDuration" min="1" max="30" value="5" />
+                    </label>
+                    <label class="field">
+                        <span>Long Break (min)</span>
+                        <input type="number" id="longBreakDuration" min="1" max="60" value="15" />
+                    </label>
+                    <label class="field">
+                        <span>Sound</span>
+                        <input type="checkbox" id="soundToggle" checked />
+                    </label>
+                    <label class="field">
+                        <span>Notifications</span>
+                        <input type="checkbox" id="notificationToggle" />
+                    </label>
+                    <div class="row center">
+                        <button class="btn primary" id="saveSettingsBtn">Save Settings</button>
+                        <button class="btn ghost" id="restoreDefaultsBtn">Restore Defaults</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="journey-card">
+            <h3>Today's study journey</h3>
+            <p class="journey-subtitle">Every little effort counts, babi!</p>
+            <div class="journey-stats">
+                <div class="journey-item">
+                    <span class="journey-icon">☀</span>
+                    <span class="journey-value" id="journeyFocusTime">0</span>
+                    <span class="journey-label">min Focus time</span>
+                </div>
+                <div class="journey-item">
+                    <span class="journey-icon">✓</span>
+                    <span class="journey-value" id="journeySessions">0</span>
+                    <span class="journey-label">Sessions</span>
+                </div>
+                <div class="journey-item">
+                    <span class="journey-icon">☕</span>
+                    <span class="journey-value" id="journeyBreaks">0</span>
+                    <span class="journey-label">Breaks taken</span>
+                </div>
+            </div>
+            <p class="journey-note">Illustrative example — the actual numbers come from real timer activity.</p>
+        </div>
+    </main>
+
+    <script src="timer.js"></script>
+</body>
+
+</html>

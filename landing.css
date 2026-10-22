@@ -104,14 +104,63 @@ body.welcome {
     animation: twinkle 2.4s steps(2) infinite
 }
 
-.star.s1 { top: 40px; left: 24%; animation-delay: .2s }
-.star.s2 { top: 120px; left: 8%; width: 14px; height: 14px; animation-delay: 1s }
-.star.s3 { top: 60px; right: 28%; width: 28px; height: 28px; animation-delay: .6s }
-.star.s4 { top: 220px; right: 6%; animation-delay: 1.4s }
-.star.s5 { top: 300px; left: 5%; animation-delay: .4s }
-.star.s6 { top: 24px; right: 6%; width: 14px; height: 14px; animation-delay: 1.8s }
-.star.s7 { top: 360px; right: 14%; width: 14px; height: 14px; animation-delay: .9s }
-.star.s8 { top: 250px; left: 18%; width: 14px; height: 14px; animation-delay: 1.2s }
+.star.s1 {
+    top: 40px;
+    left: 24%;
+    animation-delay: .2s
+}
+
+.star.s2 {
+    top: 120px;
+    left: 8%;
+    width: 14px;
+    height: 14px;
+    animation-delay: 1s
+}
+
+.star.s3 {
+    top: 60px;
+    right: 28%;
+    width: 28px;
+    height: 28px;
+    animation-delay: .6s
+}
+
+.star.s4 {
+    top: 220px;
+    right: 6%;
+    animation-delay: 1.4s
+}
+
+.star.s5 {
+    top: 300px;
+    left: 5%;
+    animation-delay: .4s
+}
+
+.star.s6 {
+    top: 24px;
+    right: 6%;
+    width: 14px;
+    height: 14px;
+    animation-delay: 1.8s
+}
+
+.star.s7 {
+    top: 360px;
+    right: 14%;
+    width: 14px;
+    height: 14px;
+    animation-delay: .9s
+}
+
+.star.s8 {
+    top: 250px;
+    left: 18%;
+    width: 14px;
+    height: 14px;
+    animation-delay: 1.2s
+}
 
 @keyframes twinkle {
 
@@ -418,15 +467,22 @@ h1 span {
 /* ---------- Header ---------- */
 .topbar {
     display: flex;
-    justify-content: space-between;
+    flex-direction: column;
+    /* stack logo above nav */
     align-items: center;
-    gap: 12px;
+    /* center everything horizontally */
+    text-align: center;
+    gap: 10px;
     flex-wrap: wrap;
     padding: 12px 16px
 }
 
 .topbar .logo {
     font-family: "Press Start 2P", monospace;
+    flex-basis: 100%;
+    /* let the logo take its own line */
+    text-align: center;
+    margin-bottom: 10px;
     font-size: 13px;
     font-weight: 800;
     color: var(--brown)
@@ -644,4 +700,294 @@ h1 span {
     }
 }
 
+/* ---------- Study Timer Page ---------- */
+body.timer-page {
+    background-color: var(--soft-yellow)
+}
 
+.timer-stage {
+    min-height: 100vh;
+    padding: 20px 16px 80px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px
+}
+
+.timer-card {
+    width: min(480px, 95%);
+    background: #fffdf4;
+    border: 4px solid var(--brown);
+    box-shadow: 8px 8px 0 var(--gold);
+    border-radius: 4px;
+    padding: 24px 20px;
+    text-align: center
+}
+
+.timer-card h1 {
+    font-family: "Press Start 2P", monospace;
+    font-size: 18px;
+    margin: 0 0 8px
+}
+
+.timer-subtitle {
+    font-weight: 700;
+    font-size: 14px;
+    color: #c98a1b;
+    margin: 0 0 20px
+}
+
+.mode-selector {
+    display: flex;
+    gap: 8px;
+    justify-content: center;
+    margin-bottom: 24px;
+    flex-wrap: wrap
+}
+
+.mode-btn {
+    font-family: "Press Start 2P", monospace;
+    font-size: 11px;
+    padding: 10px 14px;
+    border: 3px solid var(--brown);
+    background: #fff;
+    border-radius: 4px;
+    cursor: pointer;
+    color: var(--brown);
+    box-shadow: 3px 3px 0 var(--brown)
+}
+
+.mode-btn.active {
+    background: var(--yellow);
+    box-shadow: 3px 3px 0 var(--gold)
+}
+
+.mode-btn:hover {
+    background: #fff08f
+}
+
+.timer-display {
+    position: relative;
+    width: 260px;
+    height: 260px;
+    margin: 0 auto 20px
+}
+
+.progress-ring {
+    transform: rotate(-90deg)
+}
+
+.progress-bg {
+    fill: none;
+    stroke: #f0e6b5;
+    stroke-width: 12
+}
+
+.progress-fill {
+    fill: none;
+    stroke: var(--gold);
+    stroke-width: 12;
+    stroke-linecap: round;
+    transition: stroke-dashoffset 0.3s ease
+}
+
+.timer-time {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-family: "Press Start 2P", monospace;
+    font-size: 32px;
+    color: var(--brown)
+}
+
+.mode-message {
+    font-weight: 700;
+    font-size: 15px;
+    color: var(--brown);
+    margin: 0 0 20px
+}
+
+.timer-controls {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    margin-bottom: 20px;
+    flex-wrap: wrap
+}
+
+.session-counter {
+    font-weight: 700;
+    font-size: 14px;
+    color: var(--brown);
+    margin: 0 0 20px
+}
+
+.encouragement {
+    font-style: italic;
+    color: #c98a1b;
+    font-size: 14px;
+    margin: 0 0 24px;
+    min-height: 1.5em
+}
+
+.settings-section {
+    position: relative;
+    margin-bottom: 20px
+}
+
+.settings-toggle {
+    font-family: "Press Start 2P", monospace;
+    font-size: 16px;
+    background: #fff;
+    border: 3px solid var(--brown);
+    border-radius: 4px;
+    padding: 8px 12px;
+    cursor: pointer;
+    color: var(--brown);
+    box-shadow: 3px 3px 0 var(--brown)
+}
+
+.settings-panel {
+    position: absolute;
+    top: 60px;
+    left: 0;
+    right: 0;
+    background: #fffdf4;
+    border: 4px solid var(--brown);
+    box-shadow: 8px 8px 0 var(--gold);
+    border-radius: 4px;
+    padding: 16px;
+    z-index: 10
+}
+
+.settings-panel.hidden {
+    display: none
+}
+
+.settings-panel h3 {
+    font-family: "Press Start 2P", monospace;
+    font-size: 12px;
+    margin: 0 0 12px
+}
+
+.settings-panel .field {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 10px;
+    margin-bottom: 12px;
+    align-items: center
+}
+
+.settings-panel input[type="number"] {
+    width: 60px;
+    border: 3px solid var(--brown);
+    padding: 6px;
+    border-radius: 4px;
+    font-family: inherit
+}
+
+.settings-panel input[type="checkbox"] {
+    width: 20px;
+    height: 20px;
+    cursor: pointer
+}
+
+.journey-card {
+    width: min(480px, 95%);
+    background: #fffdf4;
+    border: 4px solid var(--brown);
+    box-shadow: 8px 8px 0 var(--gold);
+    border-radius: 4px;
+    padding: 20px;
+    text-align: center
+}
+
+.journey-card h3 {
+    font-family: "Press Start 2P", monospace;
+    font-size: 14px;
+    margin: 0 0 6px;
+    color: var(--brown)
+}
+
+.journey-subtitle {
+    font-size: 12px;
+    color: #c98a1b;
+    margin: 0 0 16px
+}
+
+.journey-stats {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-bottom: 12px
+}
+
+.journey-item {
+    flex: 1;
+    min-width: 120px;
+    background: #fff9ec;
+    border: 3px solid var(--gold);
+    border-radius: 4px;
+    padding: 14px 10px
+}
+
+.journey-icon {
+    font-size: 20px;
+    margin-bottom: 6px;
+    display: block
+}
+
+.journey-value {
+    font-family: "Press Start 2P", monospace;
+    font-size: 20px;
+    color: var(--brown);
+    display: block
+}
+
+.journey-label {
+    font-size: 10px;
+    color: #7a655c;
+    display: block
+}
+
+.journey-note {
+    font-size: 10px;
+    color: #7a655c;
+    margin: 0
+}
+
+@media (max-width: 480px) {
+    .timer-time {
+        font-size: 24px
+    }
+
+    .timer-display {
+        width: 200px;
+        height: 200px
+    }
+
+    .progress-ring {
+        width: 200px;
+        height: 200px
+    }
+
+    .progress-bg,
+    .progress-fill {
+        cx: 100;
+        cy: 100;
+        r: 85;
+        stroke-width: 10
+    }
+
+    .mode-selector {
+        flex-direction: column;
+        align-items: center
+    }
+
+    .mode-btn {
+        width: 100%;
+        max-width: 200px
+    }
+}
