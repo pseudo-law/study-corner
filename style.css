@@ -611,3 +611,109 @@ textarea:focus { outline: 3px solid var(--gold); }
 
 .quiz-edit { display: grid; gap: 6px; }
 .quiz-edit input { font-size: 14px; padding: 8px; }
+
+/* ---------- Floating Timer Widget (shown on Study Corner while timer runs) ---------- */
+.floating-timer {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    width: 170px;
+    background: #fffdf4;
+    border: 4px solid var(--brown);
+    box-shadow: 6px 6px 0 var(--gold);
+    border-radius: 4px;
+    z-index: 100;
+    font-family: Nunito, system-ui, sans-serif;
+    color: var(--brown);
+    user-select: none;
+    cursor: default;
+}
+
+.floating-timer.hidden {
+    display: none
+}
+
+.ft-drag-handle {
+    padding: 6px 8px;
+    font-family: "Press Start 2P", monospace;
+    font-size: 10px;
+    color: #7a655c;
+    cursor: move;
+    border-bottom: 2px dashed var(--gold);
+    display: flex;
+    justify-content: center;
+    gap: 4px;
+    touch-action: none
+}
+
+.ft-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 10px;
+    border-bottom: 2px solid #f0e6b5
+}
+
+.ft-mode {
+    font-family: "Press Start 2P", monospace;
+    font-size: 10px;
+    font-weight: 800
+}
+
+.ft-close {
+    background: transparent;
+    border: 2px solid var(--brown);
+    color: var(--brown);
+    font-family: "Press Start 2P", monospace;
+    font-size: 10px;
+    width: 22px;
+    height: 22px;
+    border-radius: 2px;
+    cursor: pointer;
+    line-height: 1
+}
+
+.ft-close:hover {
+    background: var(--red);
+    color: #fff
+}
+
+.ft-time {
+    font-family: "Press Start 2P", monospace;
+    font-size: 22px;
+    padding: 8px 10px;
+    text-align: center;
+    border-bottom: 2px solid #f0e6b5
+}
+
+.ft-controls {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 6px;
+    padding: 8px 10px
+}
+
+.ft-btn {
+    border: 3px solid var(--brown);
+    background: #fff;
+    border-radius: 4px;
+    font-family: "Press Start 2P", monospace;
+    font-size: 9px;
+    padding: 6px 4px;
+    cursor: pointer;
+    color: var(--brown);
+    box-shadow: 2px 2px 0 var(--brown)
+}
+
+.ft-btn:hover {
+    background: var(--yellow)
+}
+
+.ft-btn.ft-pause {
+    grid-column: 1 / -1;
+    background: var(--yellow)
+}
+
+.ft-btn.ft-pause.paused {
+    background: #fff
+}

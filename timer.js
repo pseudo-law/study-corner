@@ -99,6 +99,13 @@ function loadState() {
             if (parsed.settings && typeof parsed.settings === 'object') {
                 STATE.settings = { ...STATE.settings, ...parsed.settings };
             }
+            // Restore active timer runtime state if present
+            STATE.mode = parsed.mode || STATE.mode;
+            STATE.timeLeft = typeof parsed.timeLeft === 'number' ? parsed.timeLeft : STATE.timeLeft;
+            STATE.duration = typeof parsed.duration === 'number' ? parsed.duration : STATE.duration;
+            STATE.endTime = parsed.endTime || null;
+            STATE.isRunning = !!parsed.isRunning;
+            STATE.isPaused = !!parsed.isPaused;
         }
     } catch (e) {
         // ignore corrupted storage
@@ -116,7 +123,13 @@ function saveState() {
             focusSessionsCompleted: STATE.focusSessionsCompleted,
             totalFocusMinutes: STATE.totalFocusMinutes,
             breaksTaken: STATE.breaksTaken,
-            settings: STATE.settings
+            settings: STATE.settings,
+            mode: STATE.mode,
+            timeLeft: STATE.timeLeft,
+            duration: STATE.duration,
+            endTime: STATE.endTime,
+            isRunning: STATE.isRunning,
+            isPaused: STATE.isPaused
         }));
     } catch (e) {
         // ignore
@@ -392,6 +405,30 @@ document.addEventListener('click', (e) => {
 
 /* ---------- Initialize ---------- */
 loadState();
-setMode('focus');
 rotateEncouragement();
 updateJourneyUI();
+
+if (STATE.isRunning && STATE.endTime) {
+    const remaining = Math.max(0, Math.ceil((STATE.endTime - Date.now()) / 1000));
+    if (remaining > 0) {
+        STATE.timeLeft = remaining;
+        STATE.duration = STATE.timeLeft;
+        updateDisplay();
+        updateMessage();
+        updateProgress();
+        modeBtns.forEach(btn => {
+            btn.classList.toggle('active', btn.dataset.mode === STATE.mode);
+        });
+        startBtn.textContent = STATE.isPaused ? 'Resume' : 'Pause';
+        startBtn.classList.toggle('primary', !STATE.isPaused);
+        tick();
+    } else {
+        completeSession();
+    }
+} else {
+    setMode('focus');
+}
+
+window.addEventListener('beforeunload', () => {
+    saveState();
+});

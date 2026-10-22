@@ -200,7 +200,95 @@
         <span class="buddy buddy-chick" data-img="assets/chick.png">🐤</span>
     </div>
     <div id="toast" class="toast hidden"></div>
+    <!-- Floating timer widget: stays visible while browsing Study Corner -->
+    <div id="floating-timer" class="floating-timer hidden" aria-label="Study Timer">
+        <div class="ft-drag-handle" role="button" aria-label="Drag timer">⋮⋮</div>
+        <div class="ft-header">
+            <span class="ft-mode" id="ftMode">Focus</span>
+            <button class="ft-close" id="ftClose" aria-label="Hide timer">✕</button>
+        </div>
+        <div class="ft-time" id="ftTime">25:00</div>
+        <div class="ft-controls">
+            <button class="ft-btn ft-pause" id="ftPause">Pause</button>
+            <button class="ft-btn ft-mode-btn" id="ftModeFocus">Focus</button>
+            <button class="ft-btn ft-mode-btn" id="ftModeShort">Short</button>
+            <button class="ft-btn ft-mode-btn" id="ftModeLong">Long</button>
+        </div>
+    </div>
     <script src="script.js"></script>
+
+    <script>
+        /* ---------- Floating Timer Widget ---------- */
+        (function () {
+            const widget = document.getElementById('floating-timer');
+            const ftTime = document.getElementById('ftTime');
+            const ftMode = document.getElementById('ftMode');
+            const ftPause = document.getElementById('ftPause');
+            const ftClose = document.getElementById('ftClose');
+            const ftModeFocus = document.getElementById('ftModeFocus');
+            const ftModeShort = document.getElementById('ftModeShort');
+            const ftModeLong = document.getElementById('ftModeLong');
+            const dragHandle = document.querySelector('.ft-drag-handle');
+            const MODE_LABELS = { focus: 'Focus', short: 'Short Break', long: 'Long Break' };
+            let updateInterval = null;
+            function loadTimerState() { try { return JSON.parse(localStorage.getItem('babisTimer') || 'null'); } catch (e) { return null; } }
+            function saveTimerState(patch) { try { const cur = loadTimerState() || {}; localStorage.setItem('babisTimer', JSON.stringify({ ...cur, ...patch })); } catch (e) { } }
+            function formatTime(s) { return String(Math.floor(s / 60)).padStart(2, '0') + ':' + String(s % 60).padStart(2, '0'); }
+            function updateWidget() {
+                const state = loadTimerState();
+                if (!state || !state.isRunning) { widget.classList.add('hidden'); if (updateInterval) { clearInterval(updateInterval); updateInterval = null; } return; }
+                widget.classList.remove('hidden');
+                const remaining = Math.max(0, Math.ceil((state.endTime - Date.now()) / 1000));
+                ftTime.textContent = formatTime(remaining);
+                ftMode.textContent = MODE_LABELS[state.mode] || 'Focus';
+                ftPause.textContent = state.isPaused ? 'Resume' : 'Pause';
+                ftPause.classList.toggle('paused', state.isPaused);
+                if (remaining <= 0) { widget.classList.add('hidden'); if (updateInterval) { clearInterval(updateInterval); updateInterval = null; } }
+            }
+            function startLoop() { if (updateInterval) return; updateWidget(); updateInterval = setInterval(updateWidget, 1000); }
+            ftPause.addEventListener('click', () => {
+                const state = loadTimerState();
+                if (!state || !state.isRunning) return;
+                const nextPaused = !state.isPaused;
+                const patch = { isPaused: nextPaused };
+                if (!nextPaused) { const remaining = Math.max(0, Math.ceil((state.endTime - Date.now()) / 1000)); patch.endTime = Date.now() + remaining * 1000; }
+                saveTimerState(patch);
+                updateWidget();
+            });
+            function switchMode(mode) {
+                const saved = loadTimerState();
+                const settings = (saved && saved.settings) || {};
+                const durations = { focus: 25, short: 5, long: 15 };
+                const durationSeconds = (settings[mode + 'Duration'] || durations[mode]) * 60;
+                saveTimerState({ mode: mode, timeLeft: durationSeconds, duration: durationSeconds, endTime: Date.now() + durationSeconds * 1000, isRunning: true, isPaused: false });
+                updateWidget();
+                startLoop();
+            }
+            ftModeFocus.addEventListener('click', () => switchMode('focus'));
+            ftModeShort.addEventListener('click', () => switchMode('short'));
+            ftModeLong.addEventListener('click', () => switchMode('long'));
+            ftClose.addEventListener('click', () => { widget.classList.add('hidden'); if (updateInterval) { clearInterval(updateInterval); updateInterval = null; } });
+            let isDragging = false, startX, startY, initialLeft, initialTop;
+            dragHandle.addEventListener('mousedown', (e) => {
+                isDragging = true; startX = e.clientX; startY = e.clientY;
+                const rect = widget.getBoundingClientRect();
+                initialLeft = rect.left; initialTop = rect.top;
+                widget.style.position = 'fixed'; widget.style.left = initialLeft + 'px'; widget.style.top = initialTop + 'px';
+                widget.style.bottom = 'auto'; widget.style.right = 'auto'; e.preventDefault();
+            });
+            window.addEventListener('mousemove', (e) => {
+                if (!isDragging) return;
+                widget.style.left = (initialLeft + e.clientX - startX) + 'px';
+                widget.style.top = (initialTop + e.clientY - startY) + 'px';
+            });
+            window.addEventListener('mouseup', () => { isDragging = false; });
+            const state = loadTimerState();
+            if (state && state.isRunning && state.endTime) {
+                const remaining = Math.max(0, Math.ceil((state.endTime - Date.now()) / 1000));
+                if (remaining > 0) startLoop();
+            }
+        })();
+    </script>
 </body>
 
 </html>
