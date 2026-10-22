@@ -27,10 +27,21 @@
             <h1>Study Timer</h1>
             <p class="timer-subtitle">One step at a time, babi. You've got this!</p>
 
-            <div class="mode-selector">
-                <button class="mode-btn active" data-mode="focus" data-duration="25">Focus</button>
-                <button class="mode-btn" data-mode="short" data-duration="5">Short Break</button>
-                <button class="mode-btn" data-mode="long" data-duration="15">Long Break</button>
+            <!-- Collapsible controls bar -->
+            <button class="controls-toggle" id="controlsToggle" aria-expanded="false" aria-label="Show controls">
+                ☰ Controls
+            </button>
+            <div class="controls-bar hidden" id="controlsBar">
+                <div class="mode-selector">
+                    <button class="mode-btn active" data-mode="focus" data-duration="25">Focus</button>
+                    <button class="mode-btn" data-mode="short" data-duration="5">Short Break</button>
+                    <button class="mode-btn" data-mode="long" data-duration="15">Long Break</button>
+                </div>
+                <div class="timer-controls">
+                    <button class="btn primary" id="startBtn">Start</button>
+                    <button class="btn" id="resetBtn">Reset</button>
+                    <button class="btn" id="skipBtn">Skip</button>
+                </div>
             </div>
 
             <div class="timer-display">
@@ -44,12 +55,6 @@
             </div>
 
             <p class="mode-message" id="modeMessage">Time to focus, babi! ✨</p>
-
-            <div class="timer-controls">
-                <button class="btn primary" id="startBtn">Start</button>
-                <button class="btn" id="resetBtn">Reset</button>
-                <button class="btn" id="skipBtn">Skip</button>
-            </div>
 
             <p class="session-counter" id="sessionCounter">Focus sessions completed: 0</p>
 
@@ -107,7 +112,7 @@
                     <span class="journey-label">Breaks taken</span>
                 </div>
             </div>
-            <p class="journey-note">Illustrative example — the actual numbers come from real timer activity.</p>
+            <p class="journey-note">Go bab.</p>
         </div>
     </main>
 

@@ -80,6 +80,9 @@ const notificationToggle = document.getElementById('notificationToggle');
 const saveSettingsBtn = document.getElementById('saveSettingsBtn');
 const restoreDefaultsBtn = document.getElementById('restoreDefaultsBtn');
 
+const controlsToggle = document.getElementById('controlsToggle');
+const controlsBar = document.getElementById('controlsBar');
+
 const journeyFocusTime = document.getElementById('journeyFocusTime');
 const journeySessions = document.getElementById('journeySessions');
 const journeyBreaks = document.getElementById('journeyBreaks');
@@ -392,6 +395,23 @@ resetBtn.addEventListener('click', resetTimer);
 skipBtn.addEventListener('click', skipSession);
 settingsToggle.addEventListener('click', () => {
     settingsPanel.classList.toggle('hidden');
+});
+
+controlsToggle.addEventListener('click', () => {
+    const isOpen = !controlsBar.classList.contains('hidden');
+    if (isOpen) {
+        controlsBar.classList.remove('open');
+        controlsBar.classList.add('closed');
+        setTimeout(() => controlsBar.classList.add('hidden'), 300);
+        controlsToggle.textContent = '☰ Controls';
+        controlsToggle.setAttribute('aria-expanded', 'false');
+    } else {
+        controlsBar.classList.remove('hidden');
+        controlsBar.classList.remove('closed');
+        controlsBar.classList.add('open');
+        controlsToggle.textContent = '✕ Hide';
+        controlsToggle.setAttribute('aria-expanded', 'true');
+    }
 });
 saveSettingsBtn.addEventListener('click', saveSettings);
 restoreDefaultsBtn.addEventListener('click', restoreDefaults);
