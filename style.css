@@ -6,6 +6,7 @@
     --brown: #503D35;
     --green: #7FB069;
     --red: #E07A5F;
+    --soft-yellow: #FFF1A8;
 }
 
 * {
@@ -14,10 +15,10 @@
 
 body {
     margin: 0;
-    background: var(--cream);
+    background-color: var(--soft-yellow);
     color: var(--brown);
     font-family: Nunito, system-ui, sans-serif;
-    background-image: linear-gradient(#f7ecd0 1px, transparent 1px), linear-gradient(90deg, #f7ecd0 1px, transparent 1px);
+    background-image: radial-gradient(#ffe37a 2px, transparent 2px);
     background-size: 24px 24px;
 }
 
