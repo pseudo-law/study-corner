@@ -467,6 +467,31 @@ input:focus {
     color: #7a655c
 }
 
+.home-link {
+    margin-left: 12px;
+    font-family: "Press Start 2P", monospace;
+    font-size: 10px;
+    color: var(--brown);
+    text-decoration: none;
+    border: 3px solid var(--brown);
+    background: #fff;
+    padding: 6px 10px;
+    border-radius: 4px;
+    box-shadow: 3px 3px 0 var(--brown)
+}
+
+.home-link:hover,
+.home-link:focus-visible {
+    background: var(--yellow);
+    outline: 3px dashed var(--brown);
+    outline-offset: 2px
+}
+
+.home-link:active {
+    transform: translate(2px, 2px);
+    box-shadow: 1px 1px 0 var(--brown)
+}
+
 .toast {
     position: fixed;
     bottom: 16px;

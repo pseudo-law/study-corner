@@ -4,202 +4,220 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>PIXEL STUDY - your little study corner</title>
-    <link rel="stylesheet" href="style.css" />
+    <title>Welcome - babi's study nook</title>
+    <link rel="stylesheet" href="landing.css" />
     <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Nunito:wght@400;700;800&display=swap"
         rel="stylesheet">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js"></script>
-    <script
-        src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
 </head>
 
-<body>
-    <div class="app">
-        <header class="topbar pixel-panel">
-            <div class="logo">PIXEL STUDY</div>
-            <nav>
-                <button class="nav-btn active" data-nav="home">Home</button>
-                <button class="nav-btn" data-nav="sets">My Sets</button>
-                <button class="nav-btn" data-nav="create">+ Create Set</button>
-                <button class="nav-btn" data-nav="docs">Docs</button>
-                <button class="nav-btn" data-nav="progress">Progress * <span id="streakBadge">0</span></button>
-            </nav>
-        </header>
-        <section id="page-home" class="page active">
-            <div class="hero pixel-panel">
-                <div class="mascot" id="homeMascot">Hi(・ω・)</div>
-                <h1>Your little study corner</h1>
-                <p class="subtitle">Good luck studying, Liza! ٩(•́‿•̀)۶</p>
-                <div class="hero-actions">
-                    <button class="btn primary" id="goCreateBtn">+ Create Set</button>
-                    <button class="btn" id="goStudyBtn">Study Now</button>
-                </div>
-            </div>
-            <div class="stats-row">
-                <div class="stat pixel-panel"><b id="statSets">0</b><small>Saved sets</small></div>
-                <div class="stat pixel-panel"><b id="statCards">0</b><small>Total cards</small></div>
-                <div class="stat pixel-panel"><b id="statStreak">0</b><small>Study streak</small></div>
-            </div>
-            <h2 class="section-title">My Sets</h2>
-            <div id="homeSets" class="sets-grid"></div>
-        </section>
-        <section id="page-sets" class="page">
-            <h2 class="section-title">All flashcard sets</h2>
-            <div id="allSets" class="sets-grid"></div>
-        </section>
-        <section id="page-create" class="page">
-            <div class="pixel-panel form-panel">
-                <h2 id="editorTitle">Create a new set</h2>
-                <label class="field"><span>Set title *</span>
-                    <input id="setTitle" type="text" placeholder="e.g. OOP Basics" maxlength="80" />
-                </label>
-                <label class="field"><span>Description</span>
-                    <input id="setDesc" type="text" placeholder="e.g. Key ideas from chapter 3" maxlength="160" />
-                </label>
-                <h3>Cards</h3>
-                <div id="cardEditor"></div>
-                <div class="row">
-                    <button class="btn" id="addCardBtn">+ Add card</button>
-                    <div class="spacer"></div>
-                    <button class="btn ghost" id="cancelEditBtn">Cancel</button>
-                    <button class="btn primary" id="saveSetBtn">Save Set</button>
-                </div>
-                <p class="hint">Tip: alternatives separated by commas. Matching ignores case and extra spaces.</p>
-            </div>
-        </section>
-        <section id="page-detail" class="page">
-            <div class="pixel-panel">
-                <h2 id="detailTitle">Set title</h2>
-                <p id="detailDesc" class="muted"></p>
-                <p><b id="detailCount">0 cards</b> · <span id="detailDate" class="muted"></span></p>
-                <label class="field mode-pick"><span>Study mode</span>
-                    <div class="row" role="radiogroup" aria-label="Study mode">
-                        <label class="mode-opt"><input type="radio" name="studyMode" value="type" checked /> ⌨️ Type answer</label>
-                        <label class="mode-opt"><input type="radio" name="studyMode" value="mc" /> 🔘 Multiple choice</label>
-                        <label class="mode-opt"><input type="radio" name="studyMode" value="tf" /> ↔️ True / False</label>
-                    </div>
-                </label>
-                <p class="hint" id="mcHint">Multiple choice needs 4+ cards · True/False needs 2+ cards. Wrong options are borrowed from other cards.</p>
-                <div class="row">
-                    <button class="btn primary" id="studySetBtn">Study this set</button>
-                    <button class="btn" id="editSetBtn">Edit</button>
-                    <button class="btn danger" id="deleteSetBtn">Delete</button>
-                </div>
-            </div>
-            <h3 class="section-title">Preview</h3>
-            <div id="detailPreview" class="preview-list"></div>
-        </section>
-        <section id="page-study" class="page">
-            <div class="study-top pixel-panel">
-                <div><b id="studySetName">Set</b> · <span id="studyProgress">Card 1 of 1</span></div>
-                <div><span id="studyCorrect">0</span> correct · <span id="studyWrong">0</span> missed</div>
-            </div>
-            <div class="progress-track">
-                <div id="progressFill"></div>
-            </div>
-            <div class="flashcard pixel-panel" id="flashcard">
-                <div class="q-meta">QUESTION <span id="qNum">01</span> / <span id="qTotal">01</span></div>
-                <div class="mascot small" id="studyMascot">(^_^)</div>
-                <h2 id="studyQuestion">Question?</h2>
-                <input id="answerInput" type="text" placeholder="Type your answer here..." autocomplete="off" />
-                <div id="mcChoices" class="mc-choices hidden"></div>
-                <div id="tfZone" class="tf-zone hidden">
-                    <div class="tf-lanes" aria-hidden="true">
-                        <div class="tf-lane tf-lane-false">✖<br />FALSE<br /><small>← swipe / ← key</small></div>
-                        <div class="tf-lane tf-lane-true">✔<br />TRUE<br /><small>swipe → / → key</small></div>
-                    </div>
-                    <div class="tf-statement pixel-panel" id="tfStatement">
-                        <div class="tf-stamp tf-stamp-false" id="tfStampFalse">FALSE ✖</div>
-                        <div class="tf-stamp tf-stamp-true" id="tfStampTrue">TRUE ✔</div>
-                        <p class="tf-q" id="tfQuestion">Statement?</p>
-                        <p class="tf-a" id="tfAnswer">Answer?</p>
-                    </div>
-                    <div class="row center">
-                        <button class="btn danger" id="tfFalseBtn">✖ False (←)</button>
-                        <button class="btn primary" id="tfTrueBtn">True → (✔)</button>
-                    </div>
-                    <p class="hint center-text">Drag the card, swipe, or use ← / → keys. Right = True, Left = False.</p>
-                </div>
-                <div class="row center">
-                    <button class="btn primary" id="submitAnswerBtn">Submit</button>
-                    <button class="btn ghost" id="skipBtn">Skip</button>
-                </div>
-                <div id="feedback" class="feedback hidden">
-                    <div id="feedbackBanner"></div>
-                    <p><b>Your answer:</b> <span id="fbYours"></span></p>
-                    <p><b>Correct answer:</b> <span id="fbExpected"></span></p>
-                    <p class="expl"><b>Why:</b> <span id="fbExpl"></span></p>
-                    <button class="btn primary" id="nextBtn">Next Question</button>
-                </div>
-            </div>
-        </section>
-        <section id="page-results" class="page">
-            <div class="pixel-panel center-text">
-                <div class="mascot big" id="resultsMascot">*</div>
-                <h2 id="resultsTitle">Session complete!</h2>
-                <p class="big-score"><span id="scoreCorrect">0</span> / <span id="scoreTotal">0</span> correct</p>
-                <div id="badgeBox" class="badges"></div>
-                <h3>Review</h3>
-                <div id="reviewList" class="preview-list"></div>
-                <div class="row center">
-                    <button class="btn primary" id="retryMissedBtn">Retry missed cards</button>
-                    <button class="btn" id="backHomeBtn">Back home</button>
-                </div>
-            </div>
-        </section>
-        <section id="page-progress" class="page">
-            <div class="pixel-panel center-text">
-                <h2>Your progress</h2>
-                <p class="big-score"><span id="progressStreak">0</span>-day streak</p>
-                <p>Sessions: <b id="progressSessions">0</b> · Best: <b id="progressBest">-</b></p>
-                <button class="btn ghost" id="resetProgressBtn">Reset progress</button>
-            </div>
-        </section>
-        <section id="page-docs" class="page">
-            <div class="pixel-panel form-panel">
-                <h2>Study Docs</h2>
-                <p class="hint">Import a note, read it here, auto-summarize it, and turn it into quiz cards.</p>
-                <div class="row">
-                    <label class="btn" for="docFile">Import file</label>
-                    <input id="docFile" type="file" accept=".txt,.md,.markdown,.docx,.pdf,text/plain,text/markdown,application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document" class="hidden" />
-                    <button class="btn ghost" id="docClearBtn">Clear</button>
-                    <div class="spacer"></div>
-                    <button class="btn" id="docSummaryBtn">Summarize</button>
-                    <button class="btn primary" id="docQuizBtn">Make quiz cards</button>
-                </div>
-                <label class="field"><span>Or paste notes here</span>
-                    <textarea id="docInput" rows="6" placeholder="Paste your notes or chapter text here..."></textarea>
-                </label>
-                <label class="field"><span>Doc title (for saving as a set)</span>
-                    <input id="docTitle" type="text" placeholder="e.g. Biology Chapter 4" maxlength="80" />
-                </label>
-            </div>
-            <div class="pixel-panel">
-                <h3>Reading view</h3>
-                <div id="docReader" class="doc-reader"><p class="muted">No document yet. Import a file or paste notes above.</p></div>
-            </div>
-            <div class="pixel-panel hidden" id="docSummaryPanel">
-                <h3>Summary</h3>
-                <ul id="docSummaryList" class="doc-summary"></ul>
-            </div>
-            <div class="pixel-panel hidden" id="docQuizPanel">
-                <h3>Generated questions <small class="muted">(review, then save)</small></h3>
-                <div id="docQuizList" class="preview-list"></div>
-                <div class="row">
-                    <div class="spacer"></div>
-                    <button class="btn primary" id="docSaveQuizBtn">Save as flashcard set</button>
-                </div>
-            </div>
-            <h3 class="section-title">Saved docs</h3>
-            <div id="docsList" class="sets-grid"></div>
-        </section>
+<body class="welcome">
+    <header class="topbar pixel-panel">
+        <div class="logo">☀ babi's study nook</div>
+        <nav>
+            <a href="index.html" class="nav-btn active">Home</a>
+            <a href="study.html" class="nav-btn">Study Corner</a>
+            <a href="study.html" class="nav-btn">My Flashcards</a>
+            <span class="nav-btn nav-disabled" title="Coming soon">Study Timer</span>
+        </nav>
+        <button class="menu-toggle" aria-label="Menu" aria-expanded="false">☰</button>
+    </header>
+    <!-- Reusable pixel sprites -->
+    <svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+        <defs>
+            <symbol id="px-star" viewBox="0 0 7 7" shape-rendering="crispEdges">
+                <rect x="3" y="0" width="1" height="7" fill="currentColor" />
+                <rect x="0" y="3" width="7" height="1" fill="currentColor" />
+                <rect x="2" y="2" width="3" height="3" fill="currentColor" />
+            </symbol>
+            <symbol id="px-heart" viewBox="0 0 5 4" shape-rendering="crispEdges">
+                <rect x="1" y="0" width="1" height="1" fill="#E07A5F" />
+                <rect x="3" y="0" width="1" height="1" fill="#E07A5F" />
+                <rect x="0" y="1" width="5" height="1" fill="#E07A5F" />
+                <rect x="1" y="2" width="3" height="1" fill="#E07A5F" />
+                <rect x="2" y="3" width="1" height="1" fill="#E07A5F" />
+            </symbol>
+            <symbol id="px-cloud" viewBox="0 0 16 7" shape-rendering="crispEdges">
+                <rect x="4" y="0" width="5" height="1" fill="#fff" />
+                <rect x="3" y="1" width="8" height="1" fill="#fff" />
+                <rect x="1" y="2" width="14" height="1" fill="#fff" />
+                <rect x="0" y="3" width="16" height="3" fill="#fff" />
+                <rect x="1" y="6" width="14" height="1" fill="#fff" />
+            </symbol>
+        </defs>
+    </svg>
+
+    <!-- Sky decorations -->
+    <div class="sky" aria-hidden="true">
+        <svg class="sun px" viewBox="0 0 16 16" shape-rendering="crispEdges">
+            <g fill="#F6BD60">
+                <rect x="7" y="0" width="2" height="2" />
+                <rect x="7" y="14" width="2" height="2" />
+                <rect x="0" y="7" width="2" height="2" />
+                <rect x="14" y="7" width="2" height="2" />
+                <rect x="2" y="2" width="2" height="2" />
+                <rect x="12" y="2" width="2" height="2" />
+                <rect x="2" y="12" width="2" height="2" />
+                <rect x="12" y="12" width="2" height="2" />
+            </g>
+            <g fill="#FFD84D">
+                <rect x="5" y="3" width="6" height="1" />
+                <rect x="4" y="4" width="8" height="1" />
+                <rect x="3" y="5" width="10" height="6" />
+                <rect x="4" y="11" width="8" height="1" />
+                <rect x="5" y="12" width="6" height="1" />
+            </g>
+            <g fill="#503D35">
+                <rect x="5" y="6" width="1" height="2" />
+                <rect x="10" y="6" width="1" height="2" />
+                <rect x="5" y="8" width="1" height="1" />
+                <rect x="6" y="9" width="4" height="1" />
+                <rect x="10" y="8" width="1" height="1" />
+            </g>
+            <g fill="#F7A8B8">
+                <rect x="3" y="8" width="2" height="1" />
+                <rect x="11" y="8" width="2" height="1" />
+            </g>
+        </svg>
+
+        <svg class="cloud c1 px" viewBox="0 0 16 7"><use href="#px-cloud" /></svg>
+        <svg class="cloud c2 px" viewBox="0 0 16 7"><use href="#px-cloud" /></svg>
+
+        <svg class="star s1 px" viewBox="0 0 7 7"><use href="#px-star" /></svg>
+        <svg class="star s2 px" viewBox="0 0 7 7"><use href="#px-star" /></svg>
+        <svg class="star s3 px" viewBox="0 0 7 7"><use href="#px-star" /></svg>
+        <svg class="star s4 px" viewBox="0 0 7 7"><use href="#px-star" /></svg>
+        <svg class="star s5 px" viewBox="0 0 7 7"><use href="#px-star" /></svg>
+        <svg class="star s6 px" viewBox="0 0 7 7"><use href="#px-star" /></svg>
+        <svg class="star s7 px" viewBox="0 0 7 7"><use href="#px-star" /></svg>
+        <svg class="star s8 px" viewBox="0 0 7 7"><use href="#px-star" /></svg>
     </div>
-    <div class="buddies" aria-hidden="true">
-        <span class="buddy buddy-duck" data-img="assets/duck.png">🦆</span>
-        <span class="buddy buddy-chick" data-img="assets/chick.png">🐤</span>
+
+    <main class="stage">
+        <section class="card" aria-labelledby="welcomeTitle">
+            <p class="tag">~ welcome ~</p>
+            <h1 id="welcomeTitle">Hi, babi!</h1>
+            <p class="subtitle">Good luck with your studies!</p>
+            <p class="note">Welcome to your little study nook. Take things one step at a time, do your best, and remember that progress matters more than perfection. You don't have to learn everything in one day. I'm cheering for you, babi!</p>
+            <a class="start-btn" href="study.html">
+                <span class="label">Enter Study Corner</span>
+                <span class="arrow" aria-hidden="true">→</span>
+            </a>
+        </section>
+
+        <!-- Cozy scene: books, sleeping cat, notebook stack -->
+        <div class="scene" aria-hidden="true">
+            <svg class="books outlined px" viewBox="0 0 18 14" shape-rendering="crispEdges">
+                <rect x="0" y="2" width="4" height="12" fill="#E07A5F" />
+                <rect x="0" y="4" width="4" height="1" fill="#F2A491" />
+                <rect x="4" y="0" width="4" height="14" fill="#F6BD60" />
+                <rect x="4" y="2" width="4" height="1" fill="#FFE878" />
+                <rect x="8" y="3" width="4" height="11" fill="#7FB069" />
+                <rect x="8" y="5" width="4" height="1" fill="#A9D49A" />
+                <rect x="12" y="1" width="5" height="13" fill="#6CA9C4" />
+                <rect x="12" y="3" width="5" height="1" fill="#A9D6E5" />
+            </svg>
+
+            <div class="cat-wrap">
+                <span class="zzz z1">z</span>
+                <span class="zzz z2">Z</span>
+                <span class="zzz z3">z</span>
+                <svg class="cat outlined px" viewBox="0 0 24 12" shape-rendering="crispEdges">
+                    <g fill="#F6BD60">
+                        <rect x="7" y="4" width="12" height="1" />
+                        <rect x="5" y="5" width="16" height="7" />
+                        <rect x="1" y="6" width="8" height="6" />
+                        <rect x="1" y="4" width="2" height="2" />
+                        <rect x="7" y="4" width="2" height="2" />
+                        <rect x="21" y="9" width="2" height="2" />
+                        <rect x="22" y="7" width="1" height="2" />
+                    </g>
+                    <g fill="#E09F3E">
+                        <rect x="11" y="5" width="1" height="2" />
+                        <rect x="14" y="5" width="1" height="2" />
+                        <rect x="17" y="5" width="1" height="2" />
+                    </g>
+                    <g fill="#F7A8B8">
+                        <rect x="1" y="4" width="1" height="1" />
+                        <rect x="8" y="4" width="1" height="1" />
+                        <rect x="4" y="9" width="2" height="1" />
+                    </g>
+                    <g fill="#503D35">
+                        <rect x="2" y="8" width="2" height="1" />
+                        <rect x="6" y="8" width="2" height="1" />
+                    </g>
+                </svg>
+            </div>
+
+            <div class="notebooks-wrap">
+                <svg class="heart px" viewBox="0 0 5 4"><use href="#px-heart" /></svg>
+                <svg class="notebooks outlined px" viewBox="0 0 20 16" shape-rendering="crispEdges">
+                    <rect x="0" y="4" width="18" height="4" fill="#A9D6E5" />
+                    <rect x="0" y="4" width="3" height="4" fill="#6CA9C4" />
+                    <rect x="4" y="6" width="10" height="1" fill="#fff" />
+                    <rect x="2" y="8" width="16" height="4" fill="#A8D8B9" />
+                    <rect x="2" y="8" width="3" height="4" fill="#7FB069" />
+                    <rect x="6" y="10" width="8" height="1" fill="#fff" />
+                    <rect x="1" y="12" width="18" height="4" fill="#F7C9D4" />
+                    <rect x="1" y="12" width="3" height="4" fill="#E8A0B4" />
+                    <rect x="5" y="14" width="10" height="1" fill="#fff" />
+                </svg>
+            </div>
+
+            <div class="coffee-wrap">
+                <svg class="coffee outlined px" viewBox="0 0 12 14" shape-rendering="crispEdges">
+                    <rect x="2" y="2" width="8" height="10" fill="#E07A5F" />
+                    <rect x="2" y="4" width="8" height="1" fill="#F2A491" />
+                    <rect x="3" y="3" width="6" height="1" fill="#fff" />
+                    <rect x="0" y="12" width="12" height="2" fill="#503D35" />
+                </svg>
+                <svg class="steam outlined px" viewBox="0 0 8 6" shape-rendering="crispEdges">
+                    <rect x="2" y="0" width="1" height="2" fill="#fff" opacity="0.8" />
+                    <rect x="5" y="1" width="1" height="3" fill="#fff" opacity="0.6" />
+                </svg>
+            </div>
+
+            <div class="flowers-wrap">
+                <svg class="flower outlined px" viewBox="0 0 10 8" shape-rendering="crispEdges">
+                    <rect x="4" y="0" width="2" height="1" fill="#F7C9D4" />
+                    <rect x="3" y="1" width="1" height="1" fill="#F7C9D4" />
+                    <rect x="5" y="1" width="1" height="1" fill="#F7C9D4" />
+                    <rect x="4" y="2" width="2" height="1" fill="#F7C9D4" />
+                    <rect x="4" y="3" width="1" height="3" fill="#7FB069" />
+                    <rect x="3" y="6" width="4" height="1" fill="#503D35" />
+                </svg>
+                <svg class="flower outlined px" viewBox="0 0 10 8" shape-rendering="crispEdges">
+                    <rect x="4" y="0" width="2" height="1" fill="#A9D6E5" />
+                    <rect x="3" y="1" width="1" height="1" fill="#A9D6E5" />
+                    <rect x="5" y="1" width="1" height="1" fill="#A9D6E5" />
+                    <rect x="4" y="2" width="2" height="1" fill="#A9D6E5" />
+                    <rect x="4" y="3" width="1" height="3" fill="#7FB069" />
+                    <rect x="3" y="6" width="4" height="1" fill="#503D35" />
+                </svg>
+            </div>
+        </div>
+    </main>
+
+    <div class="footer-line" aria-hidden="true">
+        <p>Take a deep breath. You've got this! ☀</p>
     </div>
-    <div id="toast" class="toast hidden"></div>
-    <script src="script.js"></script>
+    <div class="floor" aria-hidden="true"></div>
+
+    <script>
+        const toggle = document.querySelector('.menu-toggle');
+        const nav = document.querySelector('header nav');
+        toggle.addEventListener('click', () => {
+            const open = toggle.getAttribute('aria-expanded') === 'true';
+            toggle.setAttribute('aria-expanded', String(!open));
+            nav.classList.toggle('open', !open);
+        });
+        document.querySelectorAll('header nav a').forEach(a => {
+            a.addEventListener('click', () => {
+                toggle.setAttribute('aria-expanded', 'false');
+                nav.classList.remove('open');
+            });
+        });
+    </script>
 </body>
 
 </html>
+
