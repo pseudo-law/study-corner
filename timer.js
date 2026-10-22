@@ -138,6 +138,78 @@ function saveState() {
         // ignore
     }
 }
+/* ---------- Cross-tab sync (floating widget <-> timer page) ---------- */
+let remoteSyncing = false;
+
+function syncFromStorage() {
+    if (remoteSyncing) return;
+    let parsed;
+    try {
+        parsed = JSON.parse(localStorage.getItem('babisTimer') || 'null');
+    } catch (e) {
+        return;
+    }
+    if (!parsed) return;
+
+    remoteSyncing = true;
+    try {
+        if (STATE.timerId) {
+            clearTimeout(STATE.timerId);
+            STATE.timerId = null;
+        }
+
+        if (typeof parsed.focusSessionsCompleted === 'number') STATE.focusSessionsCompleted = parsed.focusSessionsCompleted;
+        if (typeof parsed.totalFocusMinutes === 'number') STATE.totalFocusMinutes = parsed.totalFocusMinutes;
+        if (typeof parsed.breaksTaken === 'number') STATE.breaksTaken = parsed.breaksTaken;
+
+        if (parsed.settings && typeof parsed.settings === 'object') {
+            STATE.settings = { ...STATE.settings, ...parsed.settings };
+            focusDurationInput.value = STATE.settings.focusDuration;
+            shortBreakInput.value = STATE.settings.shortBreakDuration;
+            longBreakInput.value = STATE.settings.longBreakDuration;
+            soundToggle.checked = !!STATE.settings.soundEnabled;
+            notificationToggle.checked = !!STATE.settings.notificationsEnabled;
+        }
+
+        STATE.mode = parsed.mode || STATE.mode;
+        STATE.duration = typeof parsed.duration === 'number' ? parsed.duration : STATE.duration;
+        STATE.timeLeft = typeof parsed.timeLeft === 'number' ? parsed.timeLeft : STATE.timeLeft;
+        STATE.endTime = parsed.endTime || null;
+        STATE.isRunning = !!parsed.isRunning;
+        STATE.isPaused = !!parsed.isPaused;
+
+        if (STATE.isRunning && !STATE.isPaused && STATE.endTime) {
+            const remaining = Math.max(0, Math.ceil((STATE.endTime - Date.now()) / 1000));
+            STATE.timeLeft = remaining;
+            if (remaining > 0) {
+                tick();
+            } else {
+                STATE.isRunning = false;
+                STATE.isPaused = false;
+                STATE.endTime = null;
+            }
+        }
+
+        modeBtns.forEach(btn => btn.classList.toggle('active', btn.dataset.mode === STATE.mode));
+        startBtn.textContent = !STATE.isRunning ? 'Start' : (STATE.isPaused ? 'Resume' : 'Pause');
+        startBtn.classList.toggle('primary', STATE.isRunning && !STATE.isPaused);
+
+        updateDisplay();
+        updateProgress();
+        updateMessage();
+        updateJourneyUI();
+    } finally {
+        remoteSyncing = false;
+    }
+}
+
+window.addEventListener('storage', (e) => {
+    if (e.key === 'babisTimer') syncFromStorage();
+});
+
+document.addEventListener('visibilitychange', () => {
+    if (!document.hidden) syncFromStorage();
+});
 
 function updateJourneyUI() {
     sessionCounter.textContent = `Focus sessions completed: ${STATE.focusSessionsCompleted}`;
@@ -163,6 +235,7 @@ function setMode(mode) {
     updateDisplay();
     updateMessage();
     updateProgress();
+    saveState();
 }
 
 function updateDisplay() {
@@ -252,13 +325,23 @@ function startTimer() {
     startBtn.textContent = 'Pause';
     startBtn.classList.add('primary');
     requestNotificationPermission();
+    saveState();
     tick();
 }
 
 function pauseTimer() {
     if (!STATE.isRunning || STATE.isPaused) return;
+    STATE.timeLeft = Math.max(0, Math.ceil((STATE.endTime - Date.now()) / 1000));
     STATE.isPaused = true;
+    STATE.endTime = null;
+    if (STATE.timerId) {
+        clearTimeout(STATE.timerId);
+        STATE.timerId = null;
+    }
     startBtn.textContent = 'Resume';
+    updateDisplay();
+    updateProgress();
+    saveState();   // <-- tells the floating widget the timer is paused
 }
 
 function resumeTimer() {
@@ -267,6 +350,7 @@ function resumeTimer() {
     STATE.endTime = Date.now() + STATE.timeLeft * 1000;
     startBtn.textContent = 'Pause';
     startBtn.classList.add('primary');
+    saveState();
     tick();
 }
 
@@ -284,6 +368,7 @@ function resetTimer() {
     startBtn.classList.remove('primary');
     updateDisplay();
     updateProgress();
+    saveState();
 }
 
 function skipSession() {
@@ -297,6 +382,7 @@ function skipSession() {
     startBtn.textContent = 'Start';
     startBtn.classList.remove('primary');
     advanceSequence();
+    saveState();
 }
 
 function completeSession() {
@@ -421,6 +507,7 @@ controlsToggle.addEventListener('click', () => {
         controlsToggle.setAttribute('aria-expanded', 'true');
     }
 });
+
 saveSettingsBtn.addEventListener('click', saveSettings);
 restoreDefaultsBtn.addEventListener('click', restoreDefaults);
 document.addEventListener('click', (e) => {
@@ -436,27 +523,34 @@ loadState();
 rotateEncouragement();
 updateJourneyUI();
 
-if (STATE.isRunning && STATE.endTime) {
-    const remaining = Math.max(0, Math.ceil((STATE.endTime - Date.now()) / 1000));
-    if (remaining > 0) {
-        STATE.timeLeft = remaining;
-        STATE.duration = STATE.timeLeft;
+if (STATE.isRunning) {
+    if (STATE.isPaused) {
+        // Restore a paused timer — this is the fix that makes the widget's Pause button "stick"
         updateDisplay();
         updateMessage();
         updateProgress();
         modeBtns.forEach(btn => {
             btn.classList.toggle('active', btn.dataset.mode === STATE.mode);
         });
-        startBtn.textContent = STATE.isPaused ? 'Resume' : 'Pause';
-        startBtn.classList.toggle('primary', !STATE.isPaused);
-        tick();
-    } else {
-        completeSession();
+        startBtn.textContent = 'Resume';
+        startBtn.classList.remove('primary');
+    } else if (STATE.endTime) {
+        const remaining = Math.max(0, Math.ceil((STATE.endTime - Date.now()) / 1000));
+        if (remaining > 0) {
+            STATE.timeLeft = remaining;
+            updateDisplay();
+            updateMessage();
+            updateProgress();
+            modeBtns.forEach(btn => {
+                btn.classList.toggle('active', btn.dataset.mode === STATE.mode);
+            });
+            startBtn.textContent = 'Pause';
+            startBtn.classList.add('primary');
+            tick();
+        } else {
+            completeSession();
+        }
     }
 } else {
     setMode('focus');
 }
-
-window.addEventListener('beforeunload', () => {
-    saveState();
-});

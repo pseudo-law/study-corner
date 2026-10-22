@@ -9,23 +9,30 @@
     <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Nunito:wght@400;700;800&display=swap"
         rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js"></script>
-    <script
-        src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
 </head>
 
 <body>
     <div class="app">
-        <header class="topbar pixel-panel">
-            <div class="logo">PIXEL STUDY</div>
-            <nav>
-                <button class="nav-btn active" data-nav="home">Home</button>
-                <button class="nav-btn" data-nav="sets">My Sets</button>
-                <button class="nav-btn" data-nav="create">+ Create Set</button>
-                <button class="nav-btn" data-nav="docs">Docs</button>
-                <button class="nav-btn" data-nav="progress">Progress * <span id="streakBadge">0</span></button>
-            </nav>
-            <a href="index.html" class="home-link">← Welcome</a>
-        </header>
+        <div class="floating-actions">
+            <a href="index.html" class="home-link">← Welcome page</a>
+            <button class="nav-toggle" id="navToggle" aria-expanded="false" aria-controls="sideNav"
+                aria-label="Open options menu">☰ Menu</button>
+        </div>
+
+        <!-- Options sidebar (slides in from the left) -->
+        <nav id="sideNav" class="side-nav" aria-label="Options menu">
+            <div class="side-nav-head">
+                <span class="side-nav-title">OPTIONS</span>
+                <button class="side-nav-close" id="sideNavClose" aria-label="Close menu">✕</button>
+            </div>
+            <button class="nav-btn active" data-nav="home">Home</button>
+            <button class="nav-btn" data-nav="sets">My Sets</button>
+            <button class="nav-btn" data-nav="create">+ Create Set</button>
+            <button class="nav-btn" data-nav="docs">Docs</button>
+            <button class="nav-btn" data-nav="progress">Progress * <span id="streakBadge">0</span></button>
+        </nav>
+        <div class="nav-backdrop" id="navBackdrop" aria-hidden="true"></div>
         <section id="page-home" class="page active">
             <div class="hero pixel-panel">
                 <div class="mascot" id="homeMascot">Hi(・ω・)</div>
@@ -75,12 +82,16 @@
                 <p><b id="detailCount">0 cards</b> · <span id="detailDate" class="muted"></span></p>
                 <label class="field mode-pick"><span>Study mode</span>
                     <div class="row" role="radiogroup" aria-label="Study mode">
-                        <label class="mode-opt"><input type="radio" name="studyMode" value="type" checked /> ⌨️ Type answer</label>
-                        <label class="mode-opt"><input type="radio" name="studyMode" value="mc" /> 🔘 Multiple choice</label>
-                        <label class="mode-opt"><input type="radio" name="studyMode" value="tf" /> ↔️ True / False</label>
+                        <label class="mode-opt"><input type="radio" name="studyMode" value="type" checked /> ⌨️ Type
+                            answer</label>
+                        <label class="mode-opt"><input type="radio" name="studyMode" value="mc" /> 🔘 Multiple
+                            choice</label>
+                        <label class="mode-opt"><input type="radio" name="studyMode" value="tf" /> ↔️ True /
+                            False</label>
                     </div>
                 </label>
-                <p class="hint" id="mcHint">Multiple choice needs 4+ cards · True/False needs 2+ cards. Wrong options are borrowed from other cards.</p>
+                <p class="hint" id="mcHint">Multiple choice needs 4+ cards · True/False needs 2+ cards. Wrong options
+                    are borrowed from other cards.</p>
                 <div class="row">
                     <button class="btn primary" id="studySetBtn">Study this set</button>
                     <button class="btn" id="editSetBtn">Edit</button>
@@ -162,7 +173,9 @@
                 <p class="hint">Import a note, read it here, auto-summarize it, and turn it into quiz cards.</p>
                 <div class="row">
                     <label class="btn" for="docFile">Import file</label>
-                    <input id="docFile" type="file" accept=".txt,.md,.markdown,.docx,.pdf,text/plain,text/markdown,application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document" class="hidden" />
+                    <input id="docFile" type="file"
+                        accept=".txt,.md,.markdown,.docx,.pdf,text/plain,text/markdown,application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+                        class="hidden" />
                     <button class="btn ghost" id="docClearBtn">Clear</button>
                     <div class="spacer"></div>
                     <button class="btn" id="docSummaryBtn">Summarize</button>
@@ -177,7 +190,9 @@
             </div>
             <div class="pixel-panel">
                 <h3>Reading view</h3>
-                <div id="docReader" class="doc-reader"><p class="muted">No document yet. Import a file or paste notes above.</p></div>
+                <div id="docReader" class="doc-reader">
+                    <p class="muted">No document yet. Import a file or paste notes above.</p>
+                </div>
             </div>
             <div class="pixel-panel hidden" id="docSummaryPanel">
                 <h3>Summary</h3>
@@ -218,6 +233,35 @@
     <script src="script.js"></script>
 
     <script>
+        /* ---------- Collapsible options sidebar ---------- */
+        (function () {
+            const navToggle = document.getElementById('navToggle');
+            const sideNav = document.getElementById('sideNav');
+            const navBackdrop = document.getElementById('navBackdrop');
+            const sideNavClose = document.getElementById('sideNavClose');
+            if (!navToggle || !sideNav) return;
+
+            function setNavOpen(open) {
+                sideNav.classList.toggle('open', open);
+                navBackdrop.classList.toggle('open', open);
+                navToggle.setAttribute('aria-expanded', String(open));
+                navToggle.textContent = open ? '✕ Close' : '☰ Menu';
+            }
+
+            navToggle.addEventListener('click', () => setNavOpen(!sideNav.classList.contains('open')));
+            sideNavClose.addEventListener('click', () => setNavOpen(false));
+            navBackdrop.addEventListener('click', () => setNavOpen(false));
+            document.addEventListener('keydown', (e) => { if (e.key === 'Escape') setNavOpen(false); });
+
+            sideNav.querySelectorAll('[data-nav]').forEach((btn) => {
+                btn.addEventListener('click', () => {
+                    sideNav.querySelectorAll('[data-nav]').forEach((b) => b.classList.remove('active'));
+                    btn.classList.add('active');
+                    setNavOpen(false);
+                });
+            });
+        })();
+
         /* ---------- Floating Timer Widget ---------- */
         (function () {
             const widget = document.getElementById('floating-timer');
@@ -229,67 +273,141 @@
             const ftModeShort = document.getElementById('ftModeShort');
             const ftModeLong = document.getElementById('ftModeLong');
             const dragHandle = document.querySelector('.ft-drag-handle');
+
             const MODE_LABELS = { focus: 'Focus', short: 'Short Break', long: 'Long Break' };
+            const DURATION_KEYS = { focus: 'focusDuration', short: 'shortBreakDuration', long: 'longBreakDuration' };
+            const DEFAULT_MINUTES = { focus: 25, short: 5, long: 15 };
+
             let updateInterval = null;
-            function loadTimerState() { try { return JSON.parse(localStorage.getItem('babisTimer') || 'null'); } catch (e) { return null; } }
-            function saveTimerState(patch) { try { const cur = loadTimerState() || {}; localStorage.setItem('babisTimer', JSON.stringify({ ...cur, ...patch })); } catch (e) { } }
-            function formatTime(s) { return String(Math.floor(s / 60)).padStart(2, '0') + ':' + String(s % 60).padStart(2, '0'); }
+
+            function loadTimerState() {
+                try { return JSON.parse(localStorage.getItem('babisTimer') || 'null'); } catch (e) { return null; }
+            }
+
+            function saveTimerState(patch) {
+                try {
+                    const cur = loadTimerState() || {};
+                    localStorage.setItem('babisTimer', JSON.stringify({ ...cur, ...patch }));
+                } catch (e) { }
+            }
+
+            function formatTime(s) {
+                return String(Math.floor(s / 60)).padStart(2, '0') + ':' + String(s % 60).padStart(2, '0');
+            }
+
+            function remainingSeconds(state) {
+                if (state.isPaused) return Math.max(0, state.timeLeft || 0);
+                if (!state.endTime) return Math.max(0, state.timeLeft || 0);
+                return Math.max(0, Math.ceil((state.endTime - Date.now()) / 1000));
+            }
+
+            function stopLoop() {
+                if (updateInterval) { clearInterval(updateInterval); updateInterval = null; }
+            }
+
             function updateWidget() {
                 const state = loadTimerState();
-                if (!state || !state.isRunning) { widget.classList.add('hidden'); if (updateInterval) { clearInterval(updateInterval); updateInterval = null; } return; }
+                if (!state || !state.isRunning) {
+                    widget.classList.add('hidden');
+                    stopLoop();
+                    return;
+                }
+
                 widget.classList.remove('hidden');
-                const remaining = Math.max(0, Math.ceil((state.endTime - Date.now()) / 1000));
+
+                const remaining = remainingSeconds(state);
                 ftTime.textContent = formatTime(remaining);
                 ftMode.textContent = MODE_LABELS[state.mode] || 'Focus';
                 ftPause.textContent = state.isPaused ? 'Resume' : 'Pause';
-                ftPause.classList.toggle('paused', state.isPaused);
-                if (remaining <= 0) { widget.classList.add('hidden'); if (updateInterval) { clearInterval(updateInterval); updateInterval = null; } }
+                ftPause.classList.toggle('paused', !!state.isPaused);
+
+                if (!state.isPaused && remaining <= 0) {
+                    widget.classList.add('hidden');
+                    stopLoop();
+                }
             }
-            function startLoop() { if (updateInterval) return; updateWidget(); updateInterval = setInterval(updateWidget, 1000); }
+
+            function startLoop() {
+                updateWidget();
+                if (updateInterval) return;
+                updateInterval = setInterval(updateWidget, 1000);
+            }
+
+            /* --- Pause / Resume: now actually pauses --- */
             ftPause.addEventListener('click', () => {
                 const state = loadTimerState();
                 if (!state || !state.isRunning) return;
-                const nextPaused = !state.isPaused;
-                const patch = { isPaused: nextPaused };
-                if (!nextPaused) { const remaining = Math.max(0, Math.ceil((state.endTime - Date.now()) / 1000)); patch.endTime = Date.now() + remaining * 1000; }
-                saveTimerState(patch);
-                updateWidget();
+
+                if (state.isPaused) {
+                    const timeLeft = Math.max(0, state.timeLeft || 0);
+                    saveTimerState({ isPaused: false, endTime: Date.now() + timeLeft * 1000 });
+                } else {
+                    const remaining = remainingSeconds(state);
+                    saveTimerState({ isPaused: true, timeLeft: remaining, endTime: null });
+                }
+                startLoop();
             });
+
             function switchMode(mode) {
                 const saved = loadTimerState();
                 const settings = (saved && saved.settings) || {};
-                const durations = { focus: 25, short: 5, long: 15 };
-                const durationSeconds = (settings[mode + 'Duration'] || durations[mode]) * 60;
-                saveTimerState({ mode: mode, timeLeft: durationSeconds, duration: durationSeconds, endTime: Date.now() + durationSeconds * 1000, isRunning: true, isPaused: false });
-                updateWidget();
+                const minutes = Number(settings[DURATION_KEYS[mode]]) || DEFAULT_MINUTES[mode];
+                const durationSeconds = minutes * 60;
+
+                saveTimerState({
+                    mode: mode,
+                    timeLeft: durationSeconds,
+                    duration: durationSeconds,
+                    endTime: Date.now() + durationSeconds * 1000,
+                    isRunning: true,
+                    isPaused: false
+                });
                 startLoop();
             }
+
             ftModeFocus.addEventListener('click', () => switchMode('focus'));
             ftModeShort.addEventListener('click', () => switchMode('short'));
             ftModeLong.addEventListener('click', () => switchMode('long'));
-            ftClose.addEventListener('click', () => { widget.classList.add('hidden'); if (updateInterval) { clearInterval(updateInterval); updateInterval = null; } });
+
+            ftClose.addEventListener('click', () => {
+                widget.classList.add('hidden');
+                stopLoop();
+            });
+
+            /* --- Dragging --- */
             let isDragging = false, startX, startY, initialLeft, initialTop;
             dragHandle.addEventListener('mousedown', (e) => {
-                isDragging = true; startX = e.clientX; startY = e.clientY;
+                isDragging = true;
+                startX = e.clientX;
+                startY = e.clientY;
                 const rect = widget.getBoundingClientRect();
-                initialLeft = rect.left; initialTop = rect.top;
-                widget.style.position = 'fixed'; widget.style.left = initialLeft + 'px'; widget.style.top = initialTop + 'px';
-                widget.style.bottom = 'auto'; widget.style.right = 'auto'; e.preventDefault();
+                initialLeft = rect.left;
+                initialTop = rect.top;
+                widget.style.position = 'fixed';
+                widget.style.left = initialLeft + 'px';
+                widget.style.top = initialTop + 'px';
+                widget.style.bottom = 'auto';
+                widget.style.right = 'auto';
+                e.preventDefault();
             });
+
             window.addEventListener('mousemove', (e) => {
                 if (!isDragging) return;
                 widget.style.left = (initialLeft + e.clientX - startX) + 'px';
                 widget.style.top = (initialTop + e.clientY - startY) + 'px';
             });
+
             window.addEventListener('mouseup', () => { isDragging = false; });
-            const state = loadTimerState();
-            if (state && state.isRunning && state.endTime) {
-                const remaining = Math.max(0, Math.ceil((state.endTime - Date.now()) / 1000));
-                if (remaining > 0) startLoop();
-            }
+
+            /* --- Show widget whenever a timer exists (running OR paused) --- */
+            const initialState = loadTimerState();
+            if (initialState && initialState.isRunning) startLoop();
+
+            window.addEventListener('storage', (e) => {
+                if (e.key === 'babisTimer') startLoop();
+            });
         })();
-
-
     </script>
 </body>
+
 </html>
