@@ -15,7 +15,7 @@
 <body>
     <div class="app">
         <div class="floating-actions">
-            <a href="index.html" class="home-link">← Welcome page</a>
+            <a href="index.html" class="home-link">← Welcome</a>
             <button class="nav-toggle" id="navToggle" aria-expanded="false" aria-controls="sideNav"
                 aria-label="Open options menu">☰ Menu</button>
         </div>
@@ -39,8 +39,8 @@
                 <h1>Your little study corner</h1>
                 <p class="subtitle">Good luck studying, Liza! ٩(•́‿•̀)۶</p>
                 <div class="hero-actions">
-                    <button class="btn primary" id="goCreateBtn">+ Create Set</button>
-                    <button class="btn" id="goStudyBtn">Study Now</button>
+                    <button class="mode-btn primary" id="goCreateBtn">+ Create Set</button>
+                    <button class="mode-btn" id="goStudyBtn">Study Now</button>
                 </div>
             </div>
             <div class="stats-row">
@@ -67,10 +67,10 @@
                 <h3>Cards</h3>
                 <div id="cardEditor"></div>
                 <div class="row">
-                    <button class="btn" id="addCardBtn">+ Add card</button>
+                    <button class="mode-btn" id="addCardBtn">+ Add card</button>
                     <div class="spacer"></div>
-                    <button class="btn ghost" id="cancelEditBtn">Cancel</button>
-                    <button class="btn primary" id="saveSetBtn">Save Set</button>
+                    <button class="mode-btn ghost" id="cancelEditBtn">Cancel</button>
+                    <button class="mode-btn primary" id="saveSetBtn">Save Set</button>
                 </div>
                 <p class="hint">Tip: alternatives separated by commas. Matching ignores case and extra spaces.</p>
             </div>
@@ -93,9 +93,9 @@
                 <p class="hint" id="mcHint">Multiple choice needs 4+ cards · True/False needs 2+ cards. Wrong options
                     are borrowed from other cards.</p>
                 <div class="row">
-                    <button class="btn primary" id="studySetBtn">Study this set</button>
-                    <button class="btn" id="editSetBtn">Edit</button>
-                    <button class="btn danger" id="deleteSetBtn">Delete</button>
+                    <button class="mode-btn primary" id="studySetBtn">Study this set</button>
+                    <button class="mode-btn" id="editSetBtn">Edit</button>
+                    <button class="mode-btn danger" id="deleteSetBtn">Delete</button>
                 </div>
             </div>
             <h3 class="section-title">Preview</h3>
@@ -127,21 +127,21 @@
                         <p class="tf-a" id="tfAnswer">Answer?</p>
                     </div>
                     <div class="row center">
-                        <button class="btn danger" id="tfFalseBtn">✖ False (←)</button>
-                        <button class="btn primary" id="tfTrueBtn">True → (✔)</button>
+                        <button class="mode-btn danger" id="tfFalseBtn">✖ False (←)</button>
+                        <button class="mode-btn primary" id="tfTrueBtn">True → (✔)</button>
                     </div>
                     <p class="hint center-text">Drag the card, swipe, or use ← / → keys. Right = True, Left = False.</p>
                 </div>
                 <div class="row center">
-                    <button class="btn primary" id="submitAnswerBtn">Submit</button>
-                    <button class="btn ghost" id="skipBtn">Skip</button>
+                    <button class="mode-btn primary" id="submitAnswerBtn">Submit</button>
+                    <button class="mode-btn ghost" id="skipBtn">Skip</button>
                 </div>
                 <div id="feedback" class="feedback hidden">
                     <div id="feedbackBanner"></div>
                     <p><b>Your answer:</b> <span id="fbYours"></span></p>
                     <p><b>Correct answer:</b> <span id="fbExpected"></span></p>
                     <p class="expl"><b>Why:</b> <span id="fbExpl"></span></p>
-                    <button class="btn primary" id="nextBtn">Next Question</button>
+                    <button class="mode-btn primary" id="nextBtn">Next Question</button>
                 </div>
             </div>
         </section>
@@ -154,8 +154,8 @@
                 <h3>Review</h3>
                 <div id="reviewList" class="preview-list"></div>
                 <div class="row center">
-                    <button class="btn primary" id="retryMissedBtn">Retry missed cards</button>
-                    <button class="btn" id="backHomeBtn">Back home</button>
+                    <button class="mode-btn primary" id="retryMissedBtn">Retry missed cards</button>
+                    <button class="mode-btn" id="backHomeBtn">Back home</button>
                 </div>
             </div>
         </section>
@@ -172,14 +172,14 @@
                 <h2>Study Docs</h2>
                 <p class="hint">Import a note, read it here, auto-summarize it, and turn it into quiz cards.</p>
                 <div class="row">
-                    <label class="btn" for="docFile">Import file</label>
+                    <label class="mode-btn" for="docFile">Import file</label>
                     <input id="docFile" type="file"
                         accept=".txt,.md,.markdown,.docx,.pdf,text/plain,text/markdown,application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
                         class="hidden" />
-                    <button class="btn ghost" id="docClearBtn">Clear</button>
+                    <button class="mode-btn ghost" id="docClearBtn">Clear</button>
                     <div class="spacer"></div>
-                    <button class="btn" id="docSummaryBtn">Summarize</button>
-                    <button class="btn primary" id="docQuizBtn">Make quiz cards</button>
+                    <button class="mode-btn" id="docSummaryBtn">Summarize</button>
+                    <button class="mode-btn primary" id="docQuizBtn">Make quiz cards</button>
                 </div>
                 <label class="field"><span>Or paste notes here</span>
                     <textarea id="docInput" rows="6" placeholder="Paste your notes or chapter text here..."></textarea>
@@ -203,7 +203,7 @@
                 <div id="docQuizList" class="preview-list"></div>
                 <div class="row">
                     <div class="spacer"></div>
-                    <button class="btn primary" id="docSaveQuizBtn">Save as flashcard set</button>
+                    <button class="mode-btn primary" id="docSaveQuizBtn">Save as flashcard set</button>
                 </div>
             </div>
             <h3 class="section-title">Saved docs</h3>
