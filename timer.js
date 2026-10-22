@@ -390,7 +390,15 @@ function restoreDefaults() {
 modeBtns.forEach(btn => {
     btn.addEventListener('click', () => setMode(btn.dataset.mode));
 });
-startBtn.addEventListener('click', startTimer);
+startBtn.addEventListener('click', () => {
+    if (STATE.isPaused) {
+        resumeTimer();
+    } else if (STATE.isRunning) {
+        pauseTimer();
+    } else {
+        startTimer();
+    }
+});
 resetBtn.addEventListener('click', resetTimer);
 skipBtn.addEventListener('click', skipSession);
 settingsToggle.addEventListener('click', () => {

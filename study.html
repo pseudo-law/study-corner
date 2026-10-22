@@ -16,8 +16,10 @@
 <body>
     <div class="app">
         <header class="topbar pixel-panel">
+            <button class="sidebar-toggle" id="sidebarToggle" aria-expanded="false" aria-label="Menu">☰</button>
             <div class="logo">PIXEL STUDY</div>
-            <nav>
+            <nav class="sidebar hidden" id="sidebarNav">
+                <button class="sidebar-close" id="sidebarClose" aria-label="Close menu">✕</button>
                 <button class="nav-btn active" data-nav="home">Home</button>
                 <button class="nav-btn" data-nav="sets">My Sets</button>
                 <button class="nav-btn" data-nav="create">+ Create Set</button>
@@ -288,6 +290,46 @@
                 if (remaining > 0) startLoop();
             }
         })();
+
+    <script>
+        /* ---------- Sidebar Toggle ---------- */
+        (function () {
+            const toggle = document.getElementById('sidebarToggle');
+            const closeBtn = document.getElementById('sidebarClose');
+            const sidebar = document.getElementById('sidebarNav');
+
+            function openSidebar() {
+                sidebar.classList.remove('hidden');
+                sidebar.classList.add('open');
+                toggle.setAttribute('aria-expanded', 'true');
+            }
+
+            function closeSidebar() {
+                sidebar.classList.remove('open');
+                sidebar.classList.add('hidden');
+                toggle.setAttribute('aria-expanded', 'false');
+            }
+
+            toggle.addEventListener('click', (e) => {
+                e.stopPropagation();
+                if (sidebar.classList.contains('hidden')) {
+                    openSidebar();
+                } else {
+                    closeSidebar();
+                }
+            });
+
+            closeBtn.addEventListener('click', closeSidebar);
+
+            document.addEventListener('click', (e) => {
+                if (!sidebar.classList.contains('hidden') &&
+                    !sidebar.contains(e.target) &&
+                    e.target !== toggle) {
+                    closeSidebar();
+                }
+            });
+        })();
+    </script>
     </script>
 </body>
 

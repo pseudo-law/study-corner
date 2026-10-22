@@ -717,3 +717,79 @@ textarea:focus { outline: 3px solid var(--gold); }
 .ft-btn.ft-pause.paused {
     background: #fff
 }
+
+/* ---------- Sidebar Navigation (vertical, collapsible) ---------- */
+.sidebar-toggle {
+    font-family: "Press Start 2P", monospace;
+    font-size: 16px;
+    background: #fff;
+    border: 4px solid var(--brown);
+    border-radius: 4px;
+    padding: 8px 10px;
+    cursor: pointer;
+    color: var(--brown);
+    box-shadow: 4px 4px 0 var(--brown);
+    z-index: 200;
+}
+
+.sidebar-toggle:hover {
+    background: var(--yellow)
+}
+
+.sidebar-toggle:focus-visible {
+    outline: 4px dashed var(--brown);
+    outline-offset: 4px
+}
+
+.sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 200px;
+    height: 100vh;
+    background: #fffdf4;
+    border-right: 4px solid var(--brown);
+    box-shadow: 6px 0 0 var(--gold);
+    z-index: 150;
+    padding-top: 16px;
+    transform: translateX(-100%);
+    transition: transform 0.25s ease
+}
+
+.sidebar.open {
+    transform: translateX(0)
+}
+
+.sidebar.hidden {
+    display: none
+}
+
+/* Desktop: hide the original horizontal nav, show sidebar toggle */
+@media (min-width: 761px) {
+    .sidebar-toggle {
+        display: block
+    }
+
+    .topbar nav:not(.sidebar) {
+        display: none
+    }
+
+    .app {
+        margin-left: 0
+    }
+}
+
+/* Mobile: show toggle button, sidebar is hidden by default */
+@media (max-width: 760px) {
+    .sidebar-toggle {
+        display: block
+    }
+
+    .sidebar {
+        width: 180px
+    }
+
+    .app {
+        margin-left: 0
+    }
+}
